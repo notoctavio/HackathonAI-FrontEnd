@@ -49,7 +49,7 @@ export default function Layout() {
     <Box sx={{ overflow: 'auto' }}>
       <Toolbar>
         <Typography variant="h6" noWrap component="div">
-          HR AI Platform
+          ProMatch
         </Typography>
       </Toolbar>
       <List>

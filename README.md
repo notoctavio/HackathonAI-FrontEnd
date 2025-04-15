@@ -1,13 +1,13 @@
-# AI-Powered HR Management Platform
+# ProMatch - AI-Powered Recruitment Platform
 
-A modern, responsive web application built with React and Material-UI that serves as an AI-driven HR management tool. The application integrates with the Gemini API for matching job descriptions with candidate CVs and displaying the most suitable candidates for each posting.
+A modern, responsive web application built with React and Material-UI that serves as an AI-driven recruitment tool. The application integrates with the Gemini API for matching job descriptions with candidate CVs and displaying the most suitable candidates for each posting.
 
 ## Features
 
 - Modern, Apple-like design with smooth animations
 - Responsive layout for both desktop and mobile devices
 - Secure authentication system
-- Dashboard with key HR metrics
+- Dashboard with key recruitment metrics
 - Candidate management system
 - Job posting management
 - AI-powered candidate matching
@@ -34,8 +34,8 @@ A modern, responsive web application built with React and Material-UI that serve
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/hr-ai-platform.git
-   cd hr-ai-platform
+   git clone https://github.com/yourusername/promatch.git
+   cd promatch
    ```
 
 2. Install dependencies:

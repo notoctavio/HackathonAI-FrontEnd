@@ -1,171 +1,144 @@
 import React from 'react';
-import {
-  Box,
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  useTheme,
-  IconButton,
-  Avatar,
-} from '@mui/material';
-import {
-  People as PeopleIcon,
-  Work as WorkIcon,
-  Assessment as AssessmentIcon,
-  Notifications as NotificationsIcon,
-} from '@mui/icons-material';
+import { Box, Typography, Grid, Card, CardContent, useTheme } from '@mui/material';
 import { motion } from 'framer-motion';
 
-const fadeInUp = {
+const fadeIn = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
   transition: { duration: 0.5 },
 };
 
-const stats = [
-  {
-    title: 'Total Candidates',
-    value: '245',
-    icon: <PeopleIcon sx={{ fontSize: 40 }} />,
-    color: 'primary.main',
-  },
-  {
-    title: 'Open Positions',
-    value: '12',
-    icon: <WorkIcon sx={{ fontSize: 40 }} />,
-    color: 'secondary.main',
-  },
-  {
-    title: 'Interviews Today',
-    value: '8',
-    icon: <AssessmentIcon sx={{ fontSize: 40 }} />,
-    color: 'success.main',
-  },
-];
-
-export default function DashboardPage() {
+const DashboardPage: React.FC = () => {
   const theme = useTheme();
+
+  const stats = [
+    { title: 'Total Candidates', value: '245', change: '+12%', trend: 'up' },
+    { title: 'Active Jobs', value: '18', change: '+5%', trend: 'up' },
+    { title: 'Interviews', value: '32', change: '-3%', trend: 'down' },
+    { title: 'Hired', value: '15', change: '+8%', trend: 'up' },
+  ];
 
   return (
     <Box sx={{ p: 3 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 4,
-        }}
+      <motion.div
+        initial="initial"
+        animate="animate"
+        variants={fadeIn}
       >
-        <Typography variant="h4" sx={{ fontWeight: 600 }}>
+        <Typography
+          variant="h4"
+          sx={{
+            mb: 4,
+            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            fontWeight: 800,
+            fontSize: { xs: '2rem', md: '2.5rem' },
+          }}
+        >
           Dashboard
         </Typography>
-        <IconButton>
-          <NotificationsIcon />
-        </IconButton>
-      </Box>
 
-      <Grid container spacing={3}>
-        {stats.map((stat, index) => (
-          <Grid key={index} xs={12} sm={6} md={4}>
-            <motion.div
-              variants={fadeInUp}
-              initial="initial"
-              animate="animate"
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card
-                sx={{
-                  height: '100%',
-                  borderRadius: 3,
-                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-                  transition: 'transform 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                  },
-                }}
+        <Grid container spacing={3}>
+          {stats.map((stat, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
               >
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Box>
-                      <Typography
-                        variant="h6"
-                        sx={{ color: 'text.secondary', mb: 1 }}
-                      >
-                        {stat.title}
-                      </Typography>
-                      <Typography
-                        variant="h3"
-                        sx={{ fontWeight: 700, color: stat.color }}
-                      >
-                        {stat.value}
-                      </Typography>
-                    </Box>
-                    <Avatar
+                <Card
+                  sx={{
+                    height: '100%',
+                    background: 'rgba(255, 255, 255, 0.05)',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    borderRadius: 2,
+                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                    '&:hover': {
+                      transform: 'translateY(-5px)',
+                      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                    },
+                  }}
+                >
+                  <CardContent>
+                    <Typography
+                      variant="h6"
                       sx={{
-                        bgcolor: `${stat.color}15`,
-                        width: 60,
-                        height: 60,
-                        color: stat.color,
+                        color: 'text.secondary',
+                        mb: 1,
+                        fontSize: '0.875rem',
                       }}
                     >
-                      {stat.icon}
-                    </Avatar>
-                  </Box>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </Grid>
-        ))}
-      </Grid>
+                      {stat.title}
+                    </Typography>
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        mb: 1,
+                        fontWeight: 700,
+                        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                      }}
+                    >
+                      {stat.value}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: stat.trend === 'up' ? 'success.main' : 'error.main',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 0.5,
+                      }}
+                    >
+                      {stat.change}
+                      {stat.trend === 'up' ? '↑' : '↓'}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
 
-      <Grid container spacing={3} sx={{ mt: 3 }}>
-        <Grid xs={12} md={8}>
-          <motion.div variants={fadeInUp} initial="initial" animate="animate">
-            <Card
-              sx={{
-                borderRadius: 3,
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" sx={{ mb: 3 }}>
-                  Recent Candidates
-                </Typography>
-                {/* Add candidate list component here */}
-              </CardContent>
-            </Card>
-          </motion.div>
-        </Grid>
-        <Grid xs={12} md={4}>
-          <motion.div
-            variants={fadeInUp}
-            initial="initial"
-            animate="animate"
-            transition={{ delay: 0.2 }}
+        <Box sx={{ mt: 4 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              mb: 3,
+              color: 'text.primary',
+              fontWeight: 600,
+            }}
           >
-            <Card
-              sx={{
-                borderRadius: 3,
-                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.05)',
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" sx={{ mb: 3 }}>
-                  Upcoming Interviews
-                </Typography>
-                {/* Add interview schedule component here */}
-              </CardContent>
-            </Card>
-          </motion.div>
-        </Grid>
-      </Grid>
+            Recent Activity
+          </Typography>
+          <Card
+            sx={{
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: 2,
+            }}
+          >
+            <CardContent>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'text.secondary',
+                  textAlign: 'center',
+                  py: 4,
+                }}
+              >
+                No recent activity to display
+              </Typography>
+            </CardContent>
+          </Card>
+        </Box>
+      </motion.div>
     </Box>
   );
-} 
+};
+
+export default DashboardPage; 

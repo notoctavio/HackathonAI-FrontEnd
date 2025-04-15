@@ -87,13 +87,36 @@ export default function LoginPage() {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label="Email"
                 name="email"
                 autoComplete="email"
                 autoFocus
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                sx={{ mb: 2 }}
+                sx={{
+                  mb: 3,
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    '& fieldset': {
+                      borderColor: 'rgba(0, 0, 0, 0.4)',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'rgba(0, 0, 0, 0.6)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '& input': {
+                      color: 'rgba(0, 0, 0, 0.87)',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(0, 0, 0, 0.6)',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  },
+                }}
               />
               <TextField
                 margin="normal"
@@ -106,7 +129,30 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                sx={{ mb: 3 }}
+                sx={{
+                  mb: 3,
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    '& fieldset': {
+                      borderColor: 'rgba(0, 0, 0, 0.4)',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'rgba(0, 0, 0, 0.6)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '& input': {
+                      color: 'rgba(0, 0, 0, 0.87)',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(0, 0, 0, 0.6)',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  },
+                }}
               />
 
               <Button
@@ -127,8 +173,17 @@ export default function LoginPage() {
               <Box sx={{ textAlign: 'center', mt: 2 }}>
                 <Typography
                   variant="body2"
-                  sx={{ color: 'text.secondary', cursor: 'pointer' }}
-                  onClick={() => navigate('/signup')}
+                  sx={{
+                    mt: 2,
+                    textAlign: 'center',
+                    color: theme.palette.primary.main,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    '&:hover': {
+                      opacity: 0.8,
+                    },
+                  }}
+                  onClick={() => navigate('/register')}
                 >
                   Don't have an account? Sign Up
                 </Typography>
