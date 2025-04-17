@@ -36,7 +36,7 @@ const RegisterPage: React.FC = () => {
     firstName: '',
     lastName: '',
     email: '',
-    confirmEmail: '',
+    password: '',
     company: '',
     phone: '',
   });
@@ -103,7 +103,6 @@ const RegisterPage: React.FC = () => {
                   onChange={handleChange}
                   required
                   sx={{
-                    mb: 2,
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
                       '& fieldset': {
@@ -135,7 +134,6 @@ const RegisterPage: React.FC = () => {
                   onChange={handleChange}
                   required
                   sx={{
-                    mb: 2,
                     '& .MuiOutlinedInput-root': {
                       backgroundColor: 'rgba(255, 255, 255, 0.9)',
                       '& fieldset': {
@@ -195,10 +193,10 @@ const RegisterPage: React.FC = () => {
               />
               <TextField
                 fullWidth
-                label="Confirm Email"
-                name="confirmEmail"
-                type="email"
-                value={formData.confirmEmail}
+                label="Password"
+                name="password"
+                type="password"
+                value={formData.password}
                 onChange={handleChange}
                 required
                 sx={{
