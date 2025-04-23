@@ -5,8 +5,8 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
-import CandidatesPage from './pages/CandidatesPage';
 import SelectionPage from './pages/SelectionPage';
+import InterviewCandidates from './pages/InterviewCandidates';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -134,16 +134,6 @@ function App() {
                 }
               />
               <Route
-                path="/candidates"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <CandidatesPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
                 path="/jobs"
                 element={
                   <ProtectedRoute>
@@ -189,6 +179,16 @@ function App() {
                   <ProtectedRoute>
                     <Layout>
                       <SelectionPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/interviews"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <InterviewCandidates />
                     </Layout>
                   </ProtectedRoute>
                 }
