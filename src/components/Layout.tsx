@@ -8,9 +8,9 @@ import {
   Typography,
   Drawer,
   List,
-  ListItem,
   ListItemIcon,
   ListItemText,
+  ListItemButton,
   Badge,
   Divider,
   Button,
@@ -46,6 +46,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const menuItems = [
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
+    { text: 'Selection', icon: <People />, path: '/selection' },
     { text: 'Candidates', icon: <People />, path: '/candidates' },
     { text: 'Open Positions', icon: <Work />, path: '/jobs' },
     { text: 'Analytics', icon: <Analytics />, path: '/analytics' },
@@ -62,8 +63,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Divider />
       <List>
         {menuItems.map((item) => (
-          <ListItem
-            button
+          <ListItemButton
             key={item.text}
             onClick={() => navigate(item.path)}
             sx={{
@@ -77,7 +77,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           >
             <ListItemIcon sx={{ color: 'inherit' }}>{item.icon}</ListItemIcon>
             <ListItemText primary={item.text} />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
       <Box sx={{ flexGrow: 1 }} />

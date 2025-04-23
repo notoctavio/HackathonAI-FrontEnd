@@ -6,6 +6,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import CandidatesPage from './pages/CandidatesPage';
+import SelectionPage from './pages/SelectionPage';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -178,6 +179,16 @@ function App() {
                   <ProtectedRoute>
                     <Layout>
                       <NotificationsPage />
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/selection"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <SelectionPage />
                     </Layout>
                   </ProtectedRoute>
                 }
