@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography, Button, Container, Grid, useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { motion } from 'framer-motion';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import GroupIcon from '@mui/icons-material/Group';
 
 const HeroSection = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
@@ -35,6 +38,22 @@ const FeatureCard = styled(Box)(({ theme }) => ({
   },
 }));
 
+const IconWrapper = styled(Box)(({ theme }) => ({
+  width: 64,
+  height: 64,
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginBottom: theme.spacing(2),
+  background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+  boxShadow: `0 4px 20px ${theme.palette.primary.main}40`,
+  '& .MuiSvgIcon-root': {
+    fontSize: 32,
+    color: 'white',
+  },
+}));
+
 const fadeInUp = {
   initial: { opacity: 0, y: 60 },
   animate: { opacity: 1, y: 0 },
@@ -57,17 +76,17 @@ const HomePage: React.FC = () => {
     {
       title: 'AI-Powered Matching',
       description: 'Find the perfect candidates using advanced AI algorithms that analyze skills, experience, and cultural fit.',
-      icon: '🤖',
+      icon: <AutoAwesomeIcon />,
     },
     {
       title: 'Smart Analytics',
       description: 'Get insights into your recruitment process with real-time analytics and performance metrics.',
-      icon: '📊',
+      icon: <AnalyticsIcon />,
     },
     {
       title: 'Collaborative Hiring',
       description: 'Streamline your hiring process with tools for team collaboration and candidate evaluation.',
-      icon: '👥',
+      icon: <GroupIcon />,
     },
   ];
 
@@ -159,9 +178,9 @@ const HomePage: React.FC = () => {
                   <Grid item xs={12} key={index}>
                     <motion.div variants={fadeInUp}>
                       <FeatureCard>
-                        <Typography variant="h4" sx={{ mb: 1 }}>
+                        <IconWrapper>
                           {feature.icon}
-                        </Typography>
+                        </IconWrapper>
                         <Typography variant="h6" sx={{ mb: 1, color: 'primary.main' }}>
                           {feature.title}
                         </Typography>
