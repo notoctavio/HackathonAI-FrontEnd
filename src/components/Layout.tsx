@@ -49,6 +49,9 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
 import styled from '@emotion/styled';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 const drawerWidth = 280;
@@ -292,13 +295,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             transition: 'all 0.3s ease',
             '&:hover': {
               background: 'rgba(255, 255, 255, 0.1)',
               transform: 'translateY(-2px)',
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+=======
+              boxShadow: '0 8px 32px rgba(99, 102, 241, 0.2)',
+>>>>>>> Stashed changes
 =======
               boxShadow: '0 8px 32px rgba(99, 102, 241, 0.2)',
 >>>>>>> Stashed changes
@@ -337,6 +347,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         sx={{
           width: { sm: `calc(100% - ${drawerWidth}px)` },
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
           ml: { sm: `${drawerWidth}px` },
           background: 'rgba(255, 255, 255, 0.05)',
           backdropFilter: 'blur(10px)',
@@ -367,6 +378,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
         }}
       >
+=======
+          ml: { xs: 0, sm: drawerWidth },
+          background: 'rgba(255, 255, 255, 0.03)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+        }}
+      >
+>>>>>>> Stashed changes
         <Toolbar sx={{ 
           display: 'flex', 
           justifyContent: 'space-between',
@@ -417,6 +437,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 color: 'white',
                 opacity: 0.9,
               }} />
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             </Badge>
           </IconButton>
@@ -454,14 +477,20 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             '& .MuiDrawer-paper': {
               width: drawerWidth,
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
               background: 'rgba(255, 255, 255, 0.05)',
               backdropFilter: 'blur(10px)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
 =======
+=======
+>>>>>>> Stashed changes
               boxSizing: 'border-box',
               background: 'rgba(255, 255, 255, 0.03)',
               backdropFilter: 'blur(20px)',
               borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             },
           }}

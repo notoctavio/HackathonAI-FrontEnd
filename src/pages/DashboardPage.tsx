@@ -7,6 +7,9 @@ import { useNotifications } from '../context/NotificationContext';
 import { Work, Description, Assignment, School, Email } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { styled } from '@mui/material/styles';
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 const fadeIn = {
@@ -60,11 +63,14 @@ const DashboardPage: React.FC = () => {
 
   const stats = [
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     { title: 'Total Candidates', value: '245', change: '+12%', trend: 'up' },
     { title: 'Active Jobs', value: '18', change: '+5%', trend: 'up' },
     { title: 'Interviews', value: '32', change: '-3%', trend: 'down' },
     { title: 'Hired', value: '15', change: '+8%', trend: 'up' },
 =======
+=======
+>>>>>>> Stashed changes
     { 
       title: 'CVs Received', 
       value: '45', 
@@ -128,6 +134,7 @@ const DashboardPage: React.FC = () => {
         variants={fadeIn}
       >
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         <Typography
           variant="h4"
           sx={{
@@ -141,6 +148,11 @@ const DashboardPage: React.FC = () => {
         >
           Dashboard
         </Typography>
+=======
+        <DashboardTitle>
+          Welcome, {user?.name || 'User'}
+        </DashboardTitle>
+>>>>>>> Stashed changes
 =======
         <DashboardTitle>
           Welcome, {user?.name || 'User'}
