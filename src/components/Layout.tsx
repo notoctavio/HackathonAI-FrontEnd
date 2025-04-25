@@ -203,7 +203,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              {user?.company || 'Company'}
+              {user?.company || 'Welcome'}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

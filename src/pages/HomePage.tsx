@@ -52,12 +52,13 @@ const HeroSection = styled(Box)(({ theme }) => ({
 }));
 
 const FeatureCard = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(3),
+  padding: theme.spacing(2.5),
   borderRadius: '12px',
   background: 'rgba(255, 255, 255, 0.05)',
   backdropFilter: 'blur(10px)',
   border: '1px solid rgba(255, 255, 255, 0.1)',
   transition: 'all 0.3s ease',
+  marginBottom: theme.spacing(2),
   '&:hover': {
     transform: 'translateY(-5px)',
     boxShadow: '0 15px 30px rgba(0, 0, 0, 0.2)',
@@ -130,130 +131,170 @@ const HomePage: React.FC = () => {
           initial="initial"
           animate="animate"
         >
-          <Grid container spacing={6} alignItems="center">
-            <Grid item xs={12} md={6}>
-              <motion.div variants={fadeInUp}>
-                <Typography
-                  variant="h1"
-                  sx={{
-                    mb: 3,
-                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    fontWeight: 800,
-                    fontSize: { xs: '3rem', md: '4rem' },
-                  }}
-                >
-                  ProMatch
-                </Typography>
-              </motion.div>
-              <motion.div variants={fadeInUp}>
-                <Typography
-                  variant="h2"
-                  sx={{
-                    mb: 4,
-                    color: 'text.primary',
-                    fontSize: { xs: '2rem', md: '3rem' },
-                    lineHeight: 1.2,
-                    fontWeight: 600,
-                  }}
-                >
-                  Transform your recruitment process with AI
-                </Typography>
-              </motion.div>
-              <motion.div variants={fadeInUp}>
-                <Typography
-                  variant="body1"
-                  sx={{
-                    mb: 4,
-                    color: 'text.secondary',
-                    fontSize: '1.25rem',
-                    maxWidth: '600px',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Find the perfect candidates faster with our AI-powered recruitment platform. Streamline your hiring process and make data-driven decisions.
-                </Typography>
-              </motion.div>
-              <motion.div variants={fadeInUp}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={() => navigate('/register')}
-                  sx={{
-                    mr: 2,
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: '12px',
-                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                    '&:hover': {
-                      background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`,
-                      transform: 'translateY(-2px)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  Get Started
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  onClick={() => navigate('/login')}
-                  sx={{
-                    px: 4,
-                    py: 1.5,
-                    borderRadius: '12px',
-                    borderColor: 'rgba(255, 255, 255, 0.2)',
-                    color: 'text.primary',
-                    '&:hover': {
-                      borderColor: 'rgba(255, 255, 255, 0.4)',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      transform: 'translateY(-2px)',
-                    },
-                    transition: 'all 0.3s ease',
-                  }}
-                >
-                  Sign In
-                </Button>
-              </motion.div>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Grid container spacing={3}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: { xs: 'column', md: 'row' },
+              minHeight: '100vh',
+              pt: { xs: 4, md: 0 },
+              gap: 6
+            }}
+          >
+            <Box
+              sx={{
+                flex: { md: '0 0 41.666667%' },
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: { xs: 'center', md: 'flex-start' }
+              }}
+            >
+              <Box sx={{ maxWidth: '600px' }}>
+                <motion.div variants={fadeInUp}>
+                  <Typography
+                    variant="h1"
+                    sx={{
+                      mb: 3,
+                      background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      fontWeight: 800,
+                      fontSize: { xs: '3rem', md: '4rem' },
+                      textAlign: { xs: 'center', md: 'left' }
+                    }}
+                  >
+                    ProMatch
+                  </Typography>
+                </motion.div>
+                <motion.div variants={fadeInUp}>
+                  <Typography
+                    variant="h2"
+                    sx={{
+                      mb: 4,
+                      color: 'text.primary',
+                      fontSize: { xs: '2rem', md: '3rem' },
+                      lineHeight: 1.2,
+                      fontWeight: 600,
+                      textAlign: { xs: 'center', md: 'left' }
+                    }}
+                  >
+                    Transform your recruitment process with AI
+                  </Typography>
+                </motion.div>
+                <motion.div variants={fadeInUp}>
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      mb: 4,
+                      color: 'text.secondary',
+                      fontSize: '1.25rem',
+                      lineHeight: 1.6,
+                      textAlign: { xs: 'center', md: 'left' }
+                    }}
+                  >
+                    Find the perfect candidates faster with our AI-powered recruitment platform. Streamline your hiring process and make data-driven decisions.
+                  </Typography>
+                </motion.div>
+                <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                  <motion.div variants={fadeInUp}>
+                    <Button
+                      variant="contained"
+                      size="large"
+                      onClick={() => navigate('/register')}
+                      sx={{
+                        mr: 2,
+                        px: 4,
+                        py: 1.5,
+                        borderRadius: '12px',
+                        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                        '&:hover': {
+                          background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`,
+                          transform: 'translateY(-2px)',
+                        },
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      Get Started
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="large"
+                      onClick={() => navigate('/login')}
+                      sx={{
+                        px: 4,
+                        py: 1.5,
+                        borderRadius: '12px',
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        color: 'text.primary',
+                        '&:hover': {
+                          borderColor: 'rgba(255, 255, 255, 0.4)',
+                          background: 'rgba(255, 255, 255, 0.05)',
+                          transform: 'translateY(-2px)',
+                        },
+                        transition: 'all 0.3s ease',
+                      }}
+                    >
+                      Sign In
+                    </Button>
+                  </motion.div>
+                </Box>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                flex: { md: '0 0 58.333333%' },
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                alignItems: { xs: 'center', md: 'flex-end' }
+              }}
+            >
+              <Box 
+                sx={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: 3,
+                  width: '100%',
+                  maxWidth: '600px'
+                }}
+              >
                 {features.map((feature, index) => (
-                  <Grid item xs={12} key={index}>
-                    <motion.div variants={fadeInUp}>
-                      <FeatureCard>
+                  <motion.div key={index} variants={fadeInUp}>
+                    <FeatureCard>
+                      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                         <IconWrapper>
                           <feature.icon />
                         </IconWrapper>
-                        <Typography 
-                          variant="h6" 
-                          sx={{ 
-                            mb: 0.75,
-                            color: 'primary.main',
-                            fontWeight: 600,
-                            fontSize: '1.1rem',
-                          }}
-                        >
-                          {feature.title}
-                        </Typography>
-                        <Typography 
-                          variant="body1" 
-                          sx={{ 
-                            color: 'text.secondary',
-                            lineHeight: 1.5,
-                            fontSize: '0.95rem',
-                          }}
-                        >
-                          {feature.description}
-                        </Typography>
-                      </FeatureCard>
-                    </motion.div>
-                  </Grid>
+                        <Box>
+                          <Typography 
+                            variant="h6" 
+                            sx={{ 
+                              mb: 0.75,
+                              color: 'primary.main',
+                              fontWeight: 600,
+                              fontSize: '1.1rem',
+                            }}
+                          >
+                            {feature.title}
+                          </Typography>
+                          <Typography 
+                            variant="body1" 
+                            sx={{ 
+                              color: 'text.secondary',
+                              lineHeight: 1.5,
+                              fontSize: '0.95rem',
+                            }}
+                          >
+                            {feature.description}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </FeatureCard>
+                  </motion.div>
                 ))}
-              </Grid>
-            </Grid>
-          </Grid>
+              </Box>
+            </Box>
+          </Box>
         </motion.div>
       </Container>
     </HeroSection>
