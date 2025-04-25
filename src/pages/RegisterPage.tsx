@@ -248,12 +248,18 @@ const RegisterPage: React.FC = () => {
                     '& input': {
                       color: 'rgba(0, 0, 0, 0.87)',
                     },
+                    '& .MuiSelect-select': {
+                      color: 'rgba(0, 0, 0, 0.87)',
+                    },
                   },
                   '& .MuiInputLabel-root': {
                     color: 'rgba(0, 0, 0, 0.6)',
                     '&.Mui-focused': {
                       color: 'primary.main',
                     },
+                  },
+                  '& .MuiMenuItem-root': {
+                    color: 'rgba(0, 0, 0, 0.87)',
                   },
                 }}
               >
