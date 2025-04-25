@@ -5,10 +5,10 @@ import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
 
 const StyledCard = styled(Card)(({ theme }) => ({
-  maxWidth: 600,
+  maxWidth: 500,
   margin: 'auto',
   position: 'relative',
-  minHeight: '80vh',
+  minHeight: '70vh',
   height: 'auto',
   display: 'flex',
   flexDirection: 'column',
@@ -25,7 +25,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 }));
 
 const Sidebar = styled(Box)(({ theme }) => ({
-  width: '25%',
+  width: '22%',
   height: '100vh',
   padding: theme.spacing(2),
   overflowY: 'auto',
@@ -33,7 +33,7 @@ const Sidebar = styled(Box)(({ theme }) => ({
   backdropFilter: 'blur(10px)',
   borderRight: '1px solid rgba(255, 255, 255, 0.1)',
   '&::-webkit-scrollbar': {
-    width: '8px',
+    width: '6px',
   },
   '&::-webkit-scrollbar-track': {
     background: 'rgba(255, 255, 255, 0.05)',
@@ -100,7 +100,7 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
 
 const StyledAvatar = styled(Avatar)(() => ({
   width: '100%',
-  height: 250,
+  height: 200,
   backgroundColor: 'transparent',
   '& .MuiSvgIcon-root': {
     width: '40%',
@@ -264,7 +264,7 @@ const SelectionPage: React.FC = () => {
     <Box sx={{ display: 'flex', height: '100vh' }}>
       <Sidebar>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
             Available Jobs
           </Typography>
           <Button
@@ -277,12 +277,15 @@ const SelectionPage: React.FC = () => {
               '&:hover': {
                 background: 'linear-gradient(135deg, rgba(139, 92, 246, 1), rgba(236, 72, 153, 1))',
               },
+              fontSize: '0.8rem',
+              py: 0.5,
+              px: 1,
             }}
           >
             Add
           </Button>
         </Box>
-        <List>
+        <List sx={{ px: 0.5 }}>
           {jobs.map((job) => (
             <StyledListItemButton
               key={job.id}
@@ -292,23 +295,23 @@ const SelectionPage: React.FC = () => {
               <ListItemText
                 primary={job.title}
                 secondary={job.company}
-                primaryTypographyProps={{ fontWeight: 500 }}
-                secondaryTypographyProps={{ sx: { opacity: 0.7 } }}
+                primaryTypographyProps={{ fontWeight: 500, fontSize: '0.9rem' }}
+                secondaryTypographyProps={{ sx: { opacity: 0.7, fontSize: '0.8rem' } }}
               />
             </StyledListItemButton>
           ))}
         </List>
       </Sidebar>
 
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', p: 3 }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 600 }}>
+      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}>
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 3, fontSize: '1.8rem' }}>
           Selection
         </Typography>
         <StyledCard>
           {candidates[currentCandidateIndex]?.photo ? (
             <CardMedia
               component="img"
-              height="250"
+              height="200"
               image={candidates[currentCandidateIndex].photo}
               alt={candidates[currentCandidateIndex].name}
               sx={{ 
@@ -325,10 +328,10 @@ const SelectionPage: React.FC = () => {
             flexGrow: 1, 
             display: 'flex', 
             flexDirection: 'column',
-            gap: 2,
-            p: 3
+            gap: 1.5,
+            p: 2.5
           }}>
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            <Typography variant="h5" sx={{ fontWeight: 600, fontSize: '1.3rem' }}>
               {candidates[currentCandidateIndex]?.name}
             </Typography>
             <Typography 
@@ -336,22 +339,23 @@ const SelectionPage: React.FC = () => {
               sx={{ 
                 opacity: 0.8,
                 whiteSpace: 'pre-wrap',
-                lineHeight: 1.6
+                lineHeight: 1.5,
+                fontSize: '0.9rem'
               }}
             >
               {candidates[currentCandidateIndex]?.description}
             </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.7 }}>
+            <Typography variant="body2" sx={{ opacity: 0.7, fontSize: '0.85rem' }}>
               Experience: {candidates[currentCandidateIndex]?.experience}
             </Typography>
             <Box sx={{ 
               display: 'flex', 
               flexWrap: 'wrap', 
-              gap: 1,
+              gap: 0.8,
               mt: 'auto' 
             }}>
               {candidates[currentCandidateIndex]?.skills.map((skill, index) => (
-                <SkillChip key={index} variant="body2">
+                <SkillChip key={index} variant="body2" sx={{ fontSize: '0.8rem' }}>
                   {skill}
                 </SkillChip>
               ))}
@@ -361,8 +365,8 @@ const SelectionPage: React.FC = () => {
             <Box sx={{ 
               display: 'flex', 
               justifyContent: 'center', 
-              gap: 3, 
-              p: 3,
+              gap: 2, 
+              p: 2,
               background: 'rgba(0, 0, 0, 0.2)',
               borderTop: '1px solid rgba(255, 255, 255, 0.1)'
             }}>
@@ -370,6 +374,7 @@ const SelectionPage: React.FC = () => {
                 variant="contained"
                 color="error"
                 onClick={() => handleSwipe('left')}
+                sx={{ fontSize: '0.9rem' }}
               >
                 No
               </ActionButton>
@@ -377,6 +382,7 @@ const SelectionPage: React.FC = () => {
                 variant="contained"
                 color="success"
                 onClick={() => handleSwipe('right')}
+                sx={{ fontSize: '0.9rem' }}
               >
                 Yes
               </ActionButton>
@@ -386,17 +392,17 @@ const SelectionPage: React.FC = () => {
       </Box>
 
       <Sidebar>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, fontSize: '1.1rem', mb: 2 }}>
           All Candidates
         </Typography>
-        <List>
+        <List sx={{ px: 0.5 }}>
           {candidates.map((candidate) => (
             <Paper
               key={candidate.id}
               elevation={0}
               sx={{
                 mb: 1,
-                p: 1.5,
+                p: 1.2,
                 borderRadius: 2,
                 background: 'rgba(255, 255, 255, 0.03)',
                 backdropFilter: 'blur(5px)',
@@ -408,23 +414,23 @@ const SelectionPage: React.FC = () => {
                 },
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 {candidate.photo ? (
                   <Avatar
                     src={candidate.photo}
                     alt={candidate.name}
-                    sx={{ width: 40, height: 40 }}
+                    sx={{ width: 36, height: 36 }}
                   />
                 ) : (
-                  <Avatar sx={{ width: 40, height: 40, bgcolor: 'rgba(255, 255, 255, 0.05)' }}>
-                    <PersonIcon />
+                  <Avatar sx={{ width: 36, height: 36, bgcolor: 'rgba(255, 255, 255, 0.05)' }}>
+                    <PersonIcon sx={{ fontSize: '1.2rem' }} />
                   </Avatar>
                 )}
                 <ListItemText
                   primary={candidate.name}
                   secondary={candidate.skills.join(' • ')}
-                  primaryTypographyProps={{ fontWeight: 500 }}
-                  secondaryTypographyProps={{ sx: { opacity: 0.7 } }}
+                  primaryTypographyProps={{ fontWeight: 500, fontSize: '0.85rem' }}
+                  secondaryTypographyProps={{ sx: { opacity: 0.7, fontSize: '0.75rem' } }}
                 />
               </Box>
             </Paper>
@@ -438,7 +444,7 @@ const SelectionPage: React.FC = () => {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle sx={{ fontWeight: 600 }}>Add New Job</DialogTitle>
+        <DialogTitle sx={{ fontWeight: 600, fontSize: '1.2rem' }}>Add New Job</DialogTitle>
         <DialogContent>
           <TextField
             autoFocus
@@ -467,7 +473,7 @@ const SelectionPage: React.FC = () => {
             onChange={(e) => setNewJob(prev => ({ ...prev, description: e.target.value }))}
           />
         </DialogContent>
-        <DialogActions sx={{ p: 3 }}>
+        <DialogActions sx={{ p: 2 }}>
           <Button 
             onClick={() => setOpenJobDialog(false)}
             sx={{ 

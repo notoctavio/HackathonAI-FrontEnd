@@ -1,15 +1,44 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, Container, Grid, useTheme } from '@mui/material';
+import { Box, Typography, Button, Container, Grid, useTheme, SvgIcon, SvgIconProps } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 
-const HeroSection = styled(Box)(() => ({
+// Custom icons components with more sophisticated designs
+const AiMatchingIcon: React.FC<SvgIconProps> = (props) => (
+  <SvgIcon {...props} viewBox="0 0 24 24">
+    <path
+      fill="currentColor"
+      d="M9 11.75c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zm6 0c-.69 0-1.25.56-1.25 1.25s.56 1.25 1.25 1.25 1.25-.56 1.25-1.25-.56-1.25-1.25-1.25zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.29.02-.58.05-.86 2.36-1.05 4.23-2.98 5.21-5.37C11.07 8.33 14.05 10 17.42 10c.78 0 1.53-.09 2.25-.26.21.71.33 1.47.33 2.26 0 4.41-3.59 8-8 8z"
+    />
+  </SvgIcon>
+);
+
+const AnalyticsIcon: React.FC<SvgIconProps> = (props) => (
+  <SvgIcon {...props} viewBox="0 0 24 24">
+    <path
+      fill="currentColor"
+      d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v7H7zm4-3h2v10h-2zm4 6h2v4h-2zm-6-6.12l5-5 5 5L21 5l-7-7-7 7z"
+    />
+  </SvgIcon>
+);
+
+const CollaborationIcon: React.FC<SvgIconProps> = (props) => (
+  <SvgIcon {...props} viewBox="0 0 24 24">
+    <path
+      fill="currentColor"
+      d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"
+    />
+  </SvgIcon>
+);
+
+const HeroSection = styled(Box)(({ theme }) => ({
   minHeight: '100vh',
   display: 'flex',
   alignItems: 'center',
   position: 'relative',
   overflow: 'hidden',
+  background: `linear-gradient(135deg, ${theme.palette.background.default} 0%, ${theme.palette.background.paper} 100%)`,
   '&::before': {
     content: '""',
     position: 'absolute',
@@ -17,22 +46,44 @@ const HeroSection = styled(Box)(() => ({
     left: 0,
     right: 0,
     bottom: 0,
-    background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.15) 0%, transparent 70%)',
+    background: 'radial-gradient(circle at center, rgba(139, 92, 246, 0.1) 0%, transparent 70%)',
     zIndex: 1,
   },
 }));
 
 const FeatureCard = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(4),
-  borderRadius: theme.shape.borderRadius,
+  padding: theme.spacing(3),
+  borderRadius: '12px',
   background: 'rgba(255, 255, 255, 0.05)',
   backdropFilter: 'blur(10px)',
   border: '1px solid rgba(255, 255, 255, 0.1)',
-  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+  transition: 'all 0.3s ease',
   '&:hover': {
     transform: 'translateY(-5px)',
-    boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+    boxShadow: '0 15px 30px rgba(0, 0, 0, 0.2)',
+    background: 'rgba(255, 255, 255, 0.08)',
   },
+}));
+
+const IconWrapper = styled(Box)(({ theme }) => ({
+  width: '48px',
+  height: '48px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '12px',
+  marginBottom: theme.spacing(1.5),
+  background: `linear-gradient(135deg, ${theme.palette.primary.main}20 0%, ${theme.palette.secondary.main}20 100%)`,
+  border: `1px solid ${theme.palette.primary.main}30`,
+  '& svg': {
+    fontSize: '2rem',
+    color: theme.palette.primary.main,
+  },
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    transform: 'scale(1.05)',
+    background: `linear-gradient(135deg, ${theme.palette.primary.main}30 0%, ${theme.palette.secondary.main}30 100%)`,
+  }
 }));
 
 const fadeInUp = {
@@ -57,17 +108,17 @@ const HomePage: React.FC = () => {
     {
       title: 'AI-Powered Matching',
       description: 'Find the perfect candidates using advanced AI algorithms that analyze skills, experience, and cultural fit.',
-      icon: '🤖',
+      icon: AiMatchingIcon,
     },
     {
       title: 'Smart Analytics',
       description: 'Get insights into your recruitment process with real-time analytics and performance metrics.',
-      icon: '📊',
+      icon: AnalyticsIcon,
     },
     {
       title: 'Collaborative Hiring',
       description: 'Streamline your hiring process with tools for team collaboration and candidate evaluation.',
-      icon: '👥',
+      icon: CollaborationIcon,
     },
   ];
 
@@ -90,6 +141,7 @@ const HomePage: React.FC = () => {
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
                     fontWeight: 800,
+                    fontSize: { xs: '3rem', md: '4rem' },
                   }}
                 >
                   ProMatch
@@ -101,8 +153,9 @@ const HomePage: React.FC = () => {
                   sx={{
                     mb: 4,
                     color: 'text.primary',
-                    fontSize: { xs: '2.5rem', md: '3.5rem' },
+                    fontSize: { xs: '2rem', md: '3rem' },
                     lineHeight: 1.2,
+                    fontWeight: 600,
                   }}
                 >
                   Transform your recruitment process with AI
@@ -116,6 +169,7 @@ const HomePage: React.FC = () => {
                     color: 'text.secondary',
                     fontSize: '1.25rem',
                     maxWidth: '600px',
+                    lineHeight: 1.6,
                   }}
                 >
                   Find the perfect candidates faster with our AI-powered recruitment platform. Streamline your hiring process and make data-driven decisions.
@@ -128,10 +182,15 @@ const HomePage: React.FC = () => {
                   onClick={() => navigate('/register')}
                   sx={{
                     mr: 2,
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: '12px',
                     background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                     '&:hover': {
                       background: `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.secondary.dark} 100%)`,
+                      transform: 'translateY(-2px)',
                     },
+                    transition: 'all 0.3s ease',
                   }}
                 >
                   Get Started
@@ -141,12 +200,17 @@ const HomePage: React.FC = () => {
                   size="large"
                   onClick={() => navigate('/login')}
                   sx={{
+                    px: 4,
+                    py: 1.5,
+                    borderRadius: '12px',
                     borderColor: 'rgba(255, 255, 255, 0.2)',
                     color: 'text.primary',
                     '&:hover': {
                       borderColor: 'rgba(255, 255, 255, 0.4)',
                       background: 'rgba(255, 255, 255, 0.05)',
+                      transform: 'translateY(-2px)',
                     },
+                    transition: 'all 0.3s ease',
                   }}
                 >
                   Sign In
@@ -159,13 +223,28 @@ const HomePage: React.FC = () => {
                   <Grid item xs={12} key={index}>
                     <motion.div variants={fadeInUp}>
                       <FeatureCard>
-                        <Typography variant="h4" sx={{ mb: 1 }}>
-                          {feature.icon}
-                        </Typography>
-                        <Typography variant="h6" sx={{ mb: 1, color: 'primary.main' }}>
+                        <IconWrapper>
+                          <feature.icon />
+                        </IconWrapper>
+                        <Typography 
+                          variant="h6" 
+                          sx={{ 
+                            mb: 0.75,
+                            color: 'primary.main',
+                            fontWeight: 600,
+                            fontSize: '1.1rem',
+                          }}
+                        >
                           {feature.title}
                         </Typography>
-                        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
+                        <Typography 
+                          variant="body1" 
+                          sx={{ 
+                            color: 'text.secondary',
+                            lineHeight: 1.5,
+                            fontSize: '0.95rem',
+                          }}
+                        >
                           {feature.description}
                         </Typography>
                       </FeatureCard>

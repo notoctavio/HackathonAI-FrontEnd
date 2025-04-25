@@ -3,6 +3,13 @@ import { Box, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar, 
 import { motion } from 'framer-motion';
 import { useNotifications } from '../context/NotificationContext';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  Description as CvIcon,
+  Assignment as ApplicationIcon,
+  Person as CandidateIcon,
+  Work as JobIcon,
+  Notifications as SystemIcon
+} from '@mui/icons-material';
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -17,15 +24,15 @@ const NotificationsPage: React.FC = () => {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'cv':
-        return '📄';
+        return <CvIcon sx={{ fontSize: '1.5rem' }} />;
       case 'application':
-        return '📝';
+        return <ApplicationIcon sx={{ fontSize: '1.5rem' }} />;
       case 'candidate':
-        return '👤';
+        return <CandidateIcon sx={{ fontSize: '1.5rem' }} />;
       case 'job':
-        return '💼';
+        return <JobIcon sx={{ fontSize: '1.5rem' }} />;
       default:
-        return '🔔';
+        return <SystemIcon sx={{ fontSize: '1.5rem' }} />;
     }
   };
 
@@ -129,6 +136,12 @@ const NotificationsPage: React.FC = () => {
                         bgcolor: getStatusColor(notification.type),
                         width: 40,
                         height: 40,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiSvgIcon-root': {
+                          color: '#fff'
+                        }
                       }}
                     >
                       {getNotificationIcon(notification.type)}

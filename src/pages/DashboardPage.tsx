@@ -38,10 +38,34 @@ const DashboardPage: React.FC = () => {
   }, [addNotification]);
 
   const stats = [
-    { title: 'CVs Received', value: '45', change: '+8%', trend: 'up', icon: <Person /> },
-    { title: 'Active Applications', value: '23', change: '+12%', trend: 'up', icon: <Work /> },
-    { title: 'Interviews Scheduled', value: '15', change: '+5%', trend: 'up', icon: <Email /> },
-    { title: 'New Candidates', value: '32', change: '+15%', trend: 'up', icon: <School /> },
+    { 
+      title: 'CVs Received', 
+      value: '45', 
+      change: '+8%', 
+      trend: 'up', 
+      icon: <Person sx={{ fontSize: '2rem', color: '#fff' }} /> 
+    },
+    { 
+      title: 'Active Applications', 
+      value: '23', 
+      change: '+12%', 
+      trend: 'up', 
+      icon: <Work sx={{ fontSize: '2rem', color: '#fff' }} /> 
+    },
+    { 
+      title: 'Interviews Scheduled', 
+      value: '15', 
+      change: '+5%', 
+      trend: 'up', 
+      icon: <Email sx={{ fontSize: '2rem', color: '#fff' }} /> 
+    },
+    { 
+      title: 'New Candidates', 
+      value: '32', 
+      change: '+15%', 
+      trend: 'up', 
+      icon: <School sx={{ fontSize: '2rem', color: '#fff' }} /> 
+    },
   ];
 
   const recentActivity = [
@@ -115,10 +139,16 @@ const DashboardPage: React.FC = () => {
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                       <Box
                         sx={{
-                          p: 1,
+                          p: 1.5,
                           borderRadius: '50%',
                           background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                           mr: 2,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          width: '48px',
+                          height: '48px',
+                          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
                         }}
                       >
                         {stat.icon}
