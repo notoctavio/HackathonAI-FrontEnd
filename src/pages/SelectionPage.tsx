@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Box, Typography, Card, CardContent, CardMedia, Button, List, ListItemText, ListItemButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Paper, Avatar } from '@mui/material';
+import { Box, Typography, Card, CardContent, CardMedia, Button, List, ListItemText, ListItemButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Paper, Avatar, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import PersonIcon from '@mui/icons-material/Person';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import CloseIcon from '@mui/icons-material/Close';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: 500,
@@ -22,6 +25,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
     transform: 'translateY(-5px)',
   },
   overflowY: 'auto',
+  paddingBottom: '80px',
 }));
 
 const Sidebar = styled(Box)(({ theme }) => ({
@@ -78,15 +82,28 @@ const SkillChip = styled(Typography)(({ theme }) => ({
   },
 }));
 
-const ActionButton = styled(Button)(({ theme }) => ({
-  width: 120,
-  padding: theme.spacing(1.5),
-  borderRadius: theme.spacing(2),
+const ActionButton = styled(IconButton)(({ theme }) => ({
+  width: 64,
+  height: 64,
+  borderRadius: '50%',
   transition: 'all 0.2s ease-in-out',
   '&:hover': {
-    transform: 'scale(1.05)',
+    transform: 'scale(1.1)',
   },
 }));
+
+const SwipeCard = styled(motion.div)({
+  position: 'absolute',
+  width: '100%',
+  height: '100%',
+  cursor: 'grab',
+  '&:active': {
+    cursor: 'grabbing',
+  },
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialog-paper': {
@@ -119,6 +136,9 @@ const SelectionPage: React.FC = () => {
     description: '',
     requiredSkills: [] as string[]
   });
+
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
 
   // Mock data - replace with real data
   const [jobs, setJobs] = useState([
@@ -260,6 +280,20 @@ const SelectionPage: React.FC = () => {
     setOpenJobDialog(false);
   };
 
+  const handleDragStart = (event: any, info: any) => {
+    setDragStart({ x: info.point.x, y: info.point.y });
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = (event: any, info: any) => {
+    setIsDragging(false);
+    const dragDistance = info.point.x - dragStart.x;
+    
+    if (Math.abs(dragDistance) > 100) {
+      handleSwipe(dragDistance > 0 ? 'right' : 'left');
+    }
+  };
+
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
       <Sidebar>
@@ -303,92 +337,151 @@ const SelectionPage: React.FC = () => {
         </List>
       </Sidebar>
 
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', p: 2 }}>
+      <Box sx={{ 
+        flex: 1, 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        p: 2,
+        overflow: 'hidden',
+        position: 'relative'
+      }}>
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 3, fontSize: '1.8rem' }}>
           Selection
         </Typography>
-        <StyledCard>
-          {candidates[currentCandidateIndex]?.photo ? (
-            <CardMedia
-              component="img"
-              height="200"
-              image={candidates[currentCandidateIndex].photo}
-              alt={candidates[currentCandidateIndex].name}
-              sx={{ 
-                objectFit: 'cover',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-              }}
-            />
-          ) : (
-            <StyledAvatar>
-              <PersonIcon />
-            </StyledAvatar>
-          )}
-          <CardContent sx={{ 
-            flexGrow: 1, 
-            display: 'flex', 
-            flexDirection: 'column',
-            gap: 1.5,
-            p: 2.5
-          }}>
-            <Typography variant="h5" sx={{ fontWeight: 600, fontSize: '1.3rem' }}>
-              {candidates[currentCandidateIndex]?.name}
-            </Typography>
-            <Typography 
-              variant="body1" 
-              sx={{ 
-                opacity: 0.8,
-                whiteSpace: 'pre-wrap',
-                lineHeight: 1.5,
-                fontSize: '0.9rem'
-              }}
-            >
-              {candidates[currentCandidateIndex]?.description}
-            </Typography>
-            <Typography variant="body2" sx={{ opacity: 0.7, fontSize: '0.85rem' }}>
-              Experience: {candidates[currentCandidateIndex]?.experience}
-            </Typography>
-            <Box sx={{ 
-              display: 'flex', 
-              flexWrap: 'wrap', 
-              gap: 0.8,
-              mt: 'auto' 
-            }}>
-              {candidates[currentCandidateIndex]?.skills.map((skill, index) => (
-                <SkillChip key={index} variant="body2" sx={{ fontSize: '0.8rem' }}>
-                  {skill}
-                </SkillChip>
-              ))}
-            </Box>
-          </CardContent>
+        <Box sx={{ 
+          position: 'relative', 
+          width: '100%', 
+          maxWidth: 500, 
+          height: '70vh',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <AnimatePresence>
+            {candidates[currentCandidateIndex] && (
+              <SwipeCard
+                key={currentCandidateIndex}
+                drag
+                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                dragElastic={0.7}
+                onDragStart={handleDragStart}
+                onDragEnd={handleDragEnd}
+                initial={{ scale: 0.95, opacity: 0 }}
+                animate={{ 
+                  scale: isDragging ? 1.05 : 1,
+                  opacity: 1,
+                  x: isDragging ? undefined : 0,
+                  rotate: isDragging ? undefined : 0,
+                }}
+                exit={{ 
+                  x: isDragging ? (dragStart.x > 0 ? 500 : -500) : 0,
+                  rotate: isDragging ? (dragStart.x > 0 ? 30 : -30) : 0,
+                  opacity: 0,
+                  transition: { duration: 0.2 }
+                }}
+              >
+                <StyledCard>
+                  {candidates[currentCandidateIndex]?.photo ? (
+                    <CardMedia
+                      component="img"
+                      height="200"
+                      image={candidates[currentCandidateIndex].photo}
+                      alt={candidates[currentCandidateIndex].name}
+                      sx={{ 
+                        objectFit: 'cover',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+                      }}
+                    />
+                  ) : (
+                    <StyledAvatar>
+                      <PersonIcon />
+                    </StyledAvatar>
+                  )}
+                  <CardContent sx={{ 
+                    flexGrow: 1, 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    gap: 1.5,
+                    p: 2.5,
+                    pb: 4
+                  }}>
+                    <Typography variant="h5" sx={{ fontWeight: 600, fontSize: '1.3rem' }}>
+                      {candidates[currentCandidateIndex]?.name}
+                    </Typography>
+                    <Typography 
+                      variant="body1" 
+                      sx={{ 
+                        opacity: 0.8,
+                        whiteSpace: 'pre-wrap',
+                        lineHeight: 1.5,
+                        fontSize: '0.9rem'
+                      }}
+                    >
+                      {candidates[currentCandidateIndex]?.description}
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.7, fontSize: '0.85rem' }}>
+                      Experience: {candidates[currentCandidateIndex]?.experience}
+                    </Typography>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      flexWrap: 'wrap', 
+                      gap: 0.8,
+                      mt: 'auto',
+                      mb: 2
+                    }}>
+                      {candidates[currentCandidateIndex]?.skills.map((skill, index) => (
+                        <SkillChip key={index} variant="body2" sx={{ fontSize: '0.8rem' }}>
+                          {skill}
+                        </SkillChip>
+                      ))}
+                    </Box>
+                  </CardContent>
+                </StyledCard>
+              </SwipeCard>
+            )}
+          </AnimatePresence>
           {selectedJob && (
             <Box sx={{ 
+              position: 'absolute',
+              bottom: 20,
+              left: '50%',
+              transform: 'translateX(-50%)',
               display: 'flex', 
               justifyContent: 'center', 
-              gap: 2, 
-              p: 2,
-              background: 'rgba(0, 0, 0, 0.2)',
-              borderTop: '1px solid rgba(255, 255, 255, 0.1)'
+              gap: 3,
+              zIndex: 10,
+              background: 'rgba(0, 0, 0, 0.3)',
+              backdropFilter: 'blur(5px)',
+              borderRadius: '50px',
+              padding: '10px 20px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
             }}>
               <ActionButton
-                variant="contained"
-                color="error"
                 onClick={() => handleSwipe('left')}
-                sx={{ fontSize: '0.9rem' }}
+                sx={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(239, 68, 68, 0.3)',
+                  },
+                }}
               >
-                No
+                <CloseIcon sx={{ fontSize: 32, color: '#ef4444' }} />
               </ActionButton>
               <ActionButton
-                variant="contained"
-                color="success"
                 onClick={() => handleSwipe('right')}
-                sx={{ fontSize: '0.9rem' }}
+                sx={{
+                  backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                  '&:hover': {
+                    backgroundColor: 'rgba(34, 197, 94, 0.3)',
+                  },
+                }}
               >
-                Yes
+                <FavoriteIcon sx={{ fontSize: 32, color: '#22c55e' }} />
               </ActionButton>
             </Box>
           )}
-        </StyledCard>
+        </Box>
       </Box>
 
       <Sidebar>
