@@ -1,6 +1,6 @@
-import React from 'react';
-import { Box, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar, Chip, useTheme } from '@mui/material';
-import { motion } from 'framer-motion';
+import React, { useCallback, useRef, useEffect } from 'react';
+import { Box, Typography, List, ListItem, ListItemText, ListItemAvatar, Avatar, Chip, useTheme, CircularProgress } from '@mui/material';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useNotifications } from '../context/NotificationContext';
 import { formatDistanceToNow } from 'date-fns';
 import {
@@ -19,7 +19,33 @@ const fadeIn = {
 
 const NotificationsPage: React.FC = () => {
   const theme = useTheme();
-  const { notifications, markAsRead, markAllAsRead } = useNotifications();
+  const { notifications, totalCount, markAsRead, markAllAsRead, isLoading, loadNotifications } = useNotifications();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const loadingRef = useRef<boolean>(false);
+
+  const handleScroll = useCallback(() => {
+    if (!containerRef.current || loadingRef.current || isLoading) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+    const scrollThreshold = 200; // pixels from bottom to trigger load
+
+    if (scrollHeight - scrollTop - clientHeight < scrollThreshold) {
+      loadingRef.current = true;
+      loadNotifications(notifications.length, notifications.length + 20);
+    }
+  }, [notifications.length, loadNotifications, isLoading]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [handleScroll]);
+
+  useEffect(() => {
+    loadingRef.current = false;
+  }, [notifications]);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -50,6 +76,28 @@ const NotificationsPage: React.FC = () => {
         return theme.palette.info.main;
     }
   };
+
+  if (isLoading && notifications.length === 0) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: 'calc(100vh - 72px)',
+        }}
+      >
+        <CircularProgress 
+          sx={{
+            color: 'primary.main',
+            '& .MuiCircularProgress-circle': {
+              strokeLinecap: 'round',
+            },
+          }}
+        />
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ p: 3 }}>
@@ -94,8 +142,14 @@ const NotificationsPage: React.FC = () => {
               alignItems: 'center',
               justifyContent: 'center',
               minHeight: '50vh',
+              background: 'rgba(255, 255, 255, 0.05)',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: 2,
+              p: 4,
             }}
           >
+            <SystemIcon sx={{ fontSize: '3rem', color: 'text.secondary', mb: 2 }} />
             <Typography
               variant="h6"
               sx={{
@@ -105,97 +159,130 @@ const NotificationsPage: React.FC = () => {
             >
               No notifications yet
             </Typography>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                textAlign: 'center',
+                mt: 1,
+              }}
+            >
+              When you receive notifications, they will appear here
+            </Typography>
           </Box>
         ) : (
-          <List>
-            {notifications.map((notification) => (
-              <motion.div
-                key={notification.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <ListItem
-                  sx={{
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: 2,
-                    mb: 2,
-                    transition: 'transform 0.2s ease',
-                    '&:hover': {
-                      transform: 'translateX(5px)',
-                      background: 'rgba(255, 255, 255, 0.08)',
-                    },
-                  }}
-                  onClick={() => markAsRead(notification.id)}
-                >
-                  <ListItemAvatar>
-                    <Avatar
+          <Box 
+            ref={containerRef}
+            sx={{ 
+              height: 'calc(100vh - 200px)', 
+              width: '100%',
+              overflowY: 'auto',
+              '&::-webkit-scrollbar': {
+                width: '8px',
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '4px',
+                '&:hover': {
+                  background: 'rgba(255, 255, 255, 0.2)',
+                },
+              },
+            }}
+          >
+            <List>
+              <AnimatePresence>
+                {notifications.map((notification) => (
+                  <motion.div
+                    key={notification.id}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ListItem
                       sx={{
-                        bgcolor: getStatusColor(notification.type),
-                        width: 40,
-                        height: 40,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        '& .MuiSvgIcon-root': {
-                          color: '#fff'
-                        }
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        backdropFilter: 'blur(10px)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        borderRadius: 2,
+                        mb: 2,
+                        transition: 'all 0.2s ease',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          transform: 'translateX(5px)',
+                          background: 'rgba(255, 255, 255, 0.08)',
+                          borderColor: 'rgba(255, 255, 255, 0.2)',
+                        },
                       }}
+                      onClick={() => markAsRead(notification.id)}
                     >
-                      {getNotificationIcon(notification.type)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography
-                          variant="subtitle1"
+                      <ListItemAvatar>
+                        <Avatar
                           sx={{
-                            fontWeight: notification.read ? 400 : 600,
-                            color: notification.read ? 'text.secondary' : 'text.primary',
+                            bgcolor: getStatusColor(notification.type),
+                            width: 40,
+                            height: 40,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            '& .MuiSvgIcon-root': {
+                              color: '#fff'
+                            }
                           }}
                         >
-                          {notification.title}
-                        </Typography>
-                        {!notification.read && (
-                          <Chip
-                            label="New"
-                            size="small"
+                          {getNotificationIcon(notification.type)}
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{
+                                fontWeight: notification.read ? 400 : 600,
+                                color: notification.read ? 'text.secondary' : 'text.primary',
+                              }}
+                            >
+                              {notification.title}
+                            </Typography>
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: 'text.secondary',
+                                ml: 'auto',
+                              }}
+                            >
+                              {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
+                            </Typography>
+                          </Box>
+                        }
+                        secondary={
+                          <Typography
+                            variant="body2"
                             sx={{
-                              bgcolor: 'primary.main',
-                              color: 'white',
-                              fontSize: '0.75rem',
+                              color: 'text.secondary',
+                              mt: 0.5,
                             }}
-                          />
-                        )}
-                      </Box>
-                    }
-                    secondary={
-                      <>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: notification.read ? 'text.secondary' : 'text.primary',
-                            mb: 0.5,
-                          }}
-                        >
-                          {notification.message}
-                        </Typography>
-                        <Typography
-                          variant="caption"
-                          sx={{ color: 'text.secondary' }}
-                        >
-                          {formatDistanceToNow(notification.timestamp, { addSuffix: true })}
-                        </Typography>
-                      </>
-                    }
-                  />
-                </ListItem>
-              </motion.div>
-            ))}
-          </List>
+                          >
+                            {notification.message}
+                          </Typography>
+                        }
+                      />
+                    </ListItem>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+              {isLoading && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+                  <CircularProgress size={24} />
+                </Box>
+              )}
+            </List>
+          </Box>
         )}
       </motion.div>
     </Box>

@@ -1,21 +1,33 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
-import SelectionPage from './pages/SelectionPage';
-import InterviewCandidates from './pages/InterviewCandidates';
+import { lazy } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import LandingLayout from './components/LandingLayout';
-import JobsPage from './pages/JobsPage';
-import AnalyticsPage from './pages/AnalyticsPage';
-import SettingsPage from './pages/SettingsPage';
-import NotificationsPage from './pages/NotificationsPage';
+import LazyLoad from './components/LazyLoad';
+
+// Lazy load pages with preloading
+const preloadComponent = (importFn: () => Promise<any>) => {
+  const Component = lazy(importFn);
+  // Start preloading
+  importFn();
+  return Component;
+};
+
+// Lazy load pages
+const HomePage = preloadComponent(() => import('./pages/HomePage'));
+const LoginPage = preloadComponent(() => import('./pages/LoginPage'));
+const RegisterPage = preloadComponent(() => import('./pages/RegisterPage'));
+const DashboardPage = preloadComponent(() => import('./pages/DashboardPage'));
+const SelectionPage = preloadComponent(() => import('./pages/SelectionPage'));
+const InterviewCandidates = preloadComponent(() => import('./pages/InterviewCandidates'));
+const JobsPage = preloadComponent(() => import('./pages/JobsPage'));
+const AnalyticsPage = preloadComponent(() => import('./pages/AnalyticsPage'));
+const SettingsPage = preloadComponent(() => import('./pages/SettingsPage'));
+const NotificationsPage = preloadComponent(() => import('./pages/NotificationsPage'));
 
 const darkTheme = createTheme({
   palette: {
@@ -120,55 +132,15 @@ function App() {
         <NotificationProvider>
           <Router>
             <Routes>
-              <Route path="/" element={<LandingLayout><HomePage /></LandingLayout>} />
-              <Route path="/login" element={<LandingLayout><LoginPage /></LandingLayout>} />
-              <Route path="/register" element={<LandingLayout><RegisterPage /></LandingLayout>} />
+              <Route path="/" element={<LandingLayout><LazyLoad><HomePage /></LazyLoad></LandingLayout>} />
+              <Route path="/login" element={<LandingLayout><LazyLoad><LoginPage /></LazyLoad></LandingLayout>} />
+              <Route path="/register" element={<LandingLayout><LazyLoad><RegisterPage /></LazyLoad></LandingLayout>} />
               <Route
                 path="/dashboard"
                 element={
                   <ProtectedRoute>
                     <Layout>
-                      <DashboardPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/jobs"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <JobsPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/analytics"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <AnalyticsPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <SettingsPage />
-                    </Layout>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/notifications"
-                element={
-                  <ProtectedRoute>
-                    <Layout>
-                      <NotificationsPage />
+                      <LazyLoad><DashboardPage /></LazyLoad>
                     </Layout>
                   </ProtectedRoute>
                 }
@@ -178,7 +150,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Layout>
-                      <SelectionPage />
+                      <LazyLoad><SelectionPage /></LazyLoad>
                     </Layout>
                   </ProtectedRoute>
                 }
@@ -188,7 +160,47 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Layout>
-                      <InterviewCandidates />
+                      <LazyLoad><InterviewCandidates /></LazyLoad>
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/jobs"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <LazyLoad><JobsPage /></LazyLoad>
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/analytics"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <LazyLoad><AnalyticsPage /></LazyLoad>
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <LazyLoad><SettingsPage /></LazyLoad>
+                    </Layout>
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/notifications"
+                element={
+                  <ProtectedRoute>
+                    <Layout>
+                      <LazyLoad><NotificationsPage /></LazyLoad>
                     </Layout>
                   </ProtectedRoute>
                 }

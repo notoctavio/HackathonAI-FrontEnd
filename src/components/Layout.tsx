@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   AppBar,
@@ -14,6 +14,7 @@ import {
   Badge,
   Divider,
   Button,
+  CircularProgress,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -29,6 +30,7 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const drawerWidth = 240;
 
@@ -38,13 +40,36 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout, user } = useAuth();
   const { unreadCount } = useNotifications();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+  const [previousPath, setPreviousPath] = useState<string | null>(null);
 
-  const handleDrawerToggle = () => {
+  // Reset navigation state when location changes
+  useEffect(() => {
+    if (previousPath !== location.pathname) {
+      setIsNavigating(false);
+      setPreviousPath(location.pathname);
+    }
+  }, [location.pathname, previousPath]);
+
+  const handleDrawerToggle = useCallback(() => {
     setMobileOpen(!mobileOpen);
-  };
+  }, [mobileOpen]);
+
+  const handleNavigation = useCallback((path: string) => {
+    if (location.pathname === path) return; // Don't navigate if already on the page
+    
+    setIsNavigating(true);
+    setMobileOpen(false); // Close mobile drawer on navigation
+    
+    // Use requestAnimationFrame for smoother transitions
+    requestAnimationFrame(() => {
+      navigate(path);
+    });
+  }, [location.pathname, navigate]);
 
   const menuItems = [
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
@@ -78,7 +103,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         {menuItems.map((item) => (
           <ListItemButton
             key={item.text}
-            onClick={() => navigate(item.path)}
+            onClick={() => handleNavigation(item.path)}
+            selected={location.pathname === item.path}
             sx={{
               mb: 1,
               borderRadius: 2,
@@ -160,6 +186,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
           boxShadow: 'none',
           height: '72px',
+          zIndex: (theme) => theme.zIndex.drawer + 1,
         }}
       >
         <Toolbar sx={{ 
@@ -208,7 +235,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <IconButton
-              onClick={() => navigate('/notifications')}
+              onClick={() => handleNavigation('/notifications')}
               sx={{ 
                 position: 'relative',
                 color: '#F8FAFC',
@@ -291,19 +318,54 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         component="main"
         sx={{
           flexGrow: 1,
-          p: { xs: 2, sm: 3 },
+          p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
-          mt: 12,
-          background: 'rgba(255, 255, 255, 0.02)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.05)',
-          margin: { xs: 2, sm: 3 },
-          marginTop: { xs: 12, sm: 12 },
-          minHeight: 'calc(100vh - 160px)',
+          mt: '72px',
+          position: 'relative',
+          minHeight: 'calc(100vh - 72px)',
         }}
       >
-        {children}
+        <AnimatePresence mode="wait">
+          {isNavigating ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                background: 'rgba(255, 255, 255, 0.02)',
+                backdropFilter: 'blur(10px)',
+                zIndex: 1,
+              }}
+            >
+              <CircularProgress 
+                sx={{
+                  color: 'primary.main',
+                  '& .MuiCircularProgress-circle': {
+                    strokeLinecap: 'round',
+                  },
+                }}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
+              {children}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Box>
     </Box>
   );
