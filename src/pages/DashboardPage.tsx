@@ -17,6 +17,7 @@ import {
 import { Work, Person, School, Email } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { useNotifications } from '../context/NotificationContext';
+import Chatbot from '../components/Chatbot';
 
 const DashboardPage: React.FC = () => {
   const theme = useTheme();
@@ -263,6 +264,9 @@ const DashboardPage: React.FC = () => {
           ))}
         </List>
       </Paper>
+      
+      {/* Chatbot Component */}
+      <Chatbot />
     </Box>
   );
 };

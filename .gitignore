@@ -1,5 +1,6 @@
 # Dependencies
 /node_modules
+/node_modules 2
 /.pnp
 .pnp.js
 
@@ -32,6 +33,18 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+workspace.xml
+
+# Accidental files
+et --hard HEAD
+tina
 
 # TypeScript
-*.tsbuildinfo 
+*.tsbuildinfo
+
+# Local Netlify folder
+.netlify
+
+# Temporary files
+.tmp
+.temp 
