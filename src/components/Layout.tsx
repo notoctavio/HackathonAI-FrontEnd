@@ -42,7 +42,8 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, currentUser } = useAuth();
-  const { unreadCount } = useNotifications();
+  const notificationContext = useNotifications();
+  const [companyName, setCompanyName] = useState<string>('');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
   const [previousPath, setPreviousPath] = useState<string | null>(null);
@@ -54,6 +55,44 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       setPreviousPath(location.pathname);
     }
   }, [location.pathname, previousPath]);
+
+  // Set company name from user data
+  useEffect(() => {
+    try {
+      // Force a specific company name for testing
+      setCompanyName("Amazon");
+      
+      // Get company name from currentUser
+      if (currentUser && currentUser.company) {
+        setCompanyName(currentUser.company);
+        return;
+      }
+      
+      // Fallback to localStorage
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const userData = JSON.parse(userStr);
+        if (userData && userData.company) {
+          setCompanyName(userData.company);
+        }
+      }
+    } catch (error) {
+      console.error("Error getting company name:", error);
+    }
+  }, [currentUser]);
+
+  // Add debug logging
+  useEffect(() => {
+    console.log("Layout received currentUser:", currentUser);
+    if (currentUser) {
+      console.log("Current user company:", currentUser.company);
+      console.log("User object:", JSON.stringify(currentUser));
+    }
+    
+    // Also check localStorage
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    console.log("User from localStorage:", user);
+  }, [currentUser]);
 
   const handleDrawerToggle = useCallback(() => {
     setMobileOpen(!mobileOpen);
@@ -76,11 +115,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { text: 'Selection', icon: <SelectionIcon />, path: '/selection' },
     { text: 'Interviews', icon: <InterviewIcon />, path: '/interviews' }
   ];
-
-  // Add debug logging
-  useEffect(() => {
-    console.log("Layout received currentUser:", currentUser);
-  }, [currentUser]);
 
   const drawer = (
     <Box sx={{ overflow: 'auto', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -229,13 +263,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 fontWeight: 600,
                 color: '#F8FAFC',
                 fontSize: '1.1rem',
-                display: { xs: 'none', sm: 'block' },
+                display: 'block',
                 background: 'linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              {currentUser?.company || 'Welcome'}
+              {companyName || 'Loading...'}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -269,7 +303,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 }
               }}
             >
-              <Badge badgeContent={unreadCount} color="error">
+              <Badge badgeContent={notificationContext.notifications.filter(n => !n.read).length} color="error">
                 <NotificationsIcon sx={{ fontSize: '1.3rem' }} />
               </Badge>
             </IconButton>

@@ -8,7 +8,7 @@ import {
   useTheme 
 } from '@mui/material';
 import { Close as CloseIcon, CheckCircle, Info, Warning, Error } from '@mui/icons-material';
-import { useNotifications, Notification } from '../context/NotificationContext';
+import { useNotifications, Notification, NotificationType } from '../context/NotificationContext';
 
 const NotificationPopup: React.FC = () => {
   const theme = useTheme();
@@ -59,6 +59,8 @@ const NotificationPopup: React.FC = () => {
         return <CheckCircle sx={{ color: theme.palette.success.main, fontSize: '1.5rem' }} />;
       case 'application':
         return <Info sx={{ color: theme.palette.info.main, fontSize: '1.5rem' }} />;
+      case 'match':
+        return <CheckCircle sx={{ color: theme.palette.success.main, fontSize: '1.5rem' }} />;
       case 'info':
         return <Info sx={{ color: theme.palette.info.main, fontSize: '1.5rem' }} />;
       case 'warning':

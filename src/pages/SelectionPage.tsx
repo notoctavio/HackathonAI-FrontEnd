@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Card, CardContent, CardMedia, Button, List, ListItemText, ListItemButton, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Paper, Avatar, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
@@ -6,6 +6,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CloseIcon from '@mui/icons-material/Close';
 import { motion, AnimatePresence } from 'framer-motion';
+import { cvMatcherService, Candidate, JobDescription } from '../services/cvMatcher.service';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   maxWidth: 500,
@@ -139,104 +140,35 @@ const SelectionPage: React.FC = () => {
 
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
+  
+  // Data states
+  const [jobs, setJobs] = useState<JobDescription[]>([]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock data - replace with real data
-  const [jobs, setJobs] = useState([
-    { 
-      id: 1, 
-      title: 'Frontend Developer', 
-      company: 'Tech Corp', 
-      description: 'Looking for a frontend developer with experience in React and TypeScript to build modern and responsive interfaces. UI/UX knowledge is a plus.',
-      requiredSkills: ['React', 'TypeScript', 'CSS', 'HTML']
-    },
-    { 
-      id: 2, 
-      title: 'Backend Developer', 
-      company: 'Soft Inc', 
-      description: 'Backend developer for cloud architecture and microservices. Experience required in Node.js and databases.',
-      requiredSkills: ['Node.js', 'PostgreSQL', 'REST API', 'Docker']
-    },
-    {
-      id: 3,
-      title: 'Full Stack Developer',
-      company: 'Digital Solutions',
-      description: 'Full-stack developer for e-commerce platform development. Experience in MERN stack and online payment integration.',
-      requiredSkills: ['React', 'Node.js', 'MongoDB', 'Express']
-    },
-    {
-      id: 4,
-      title: 'UI/UX Designer',
-      company: 'Creative Studio',
-      description: 'Designer for creating intuitive and attractive interfaces. Experience in design systems and prototyping.',
-      requiredSkills: ['Figma', 'Adobe XD', 'UI Design', 'Prototyping']
-    },
-    {
-      id: 5,
-      title: 'DevOps Engineer',
-      company: 'Cloud Tech',
-      description: 'DevOps engineer for process automation and cloud infrastructure management.',
-      requiredSkills: ['AWS', 'Docker', 'Kubernetes', 'CI/CD']
+  // Load data from the service
+  useEffect(() => {
+    try {
+      // Load jobs and candidates from the service
+      const allJobs = cvMatcherService.getAllJobDescriptions();
+      const allCandidates = cvMatcherService.getAllCandidates();
+      
+      setJobs(allJobs);
+      setCandidates(allCandidates);
+      
+      console.log('Loaded jobs:', allJobs);
+      console.log('Loaded candidates:', allCandidates);
+      
+      // Select the first job by default if available
+      if (allJobs.length > 0) {
+        setSelectedJob(allJobs[0].id);
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
     }
-  ]);
-
-  const candidates = [
-    {
-      id: 1,
-      name: 'John Doe',
-      photo: '', // Empty for testing default avatar
-      skills: ['React', 'TypeScript', 'Node.js', 'CSS', 'HTML'],
-      experience: '3 years',
-      description: 'Frontend developer passionate about creating modern and intuitive interfaces. Experience in developing responsive web applications and performance optimization.',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      photo: '',
-      skills: ['Python', 'Django', 'PostgreSQL', 'Docker'],
-      experience: '4 years',
-      description: 'Backend developer focused on scalable systems and cloud architecture. Experience in developing RESTful APIs and microservices.',
-    },
-    {
-      id: 3,
-      name: 'Alex Johnson',
-      photo: '',
-      skills: ['React', 'Node.js', 'MongoDB', 'Express', 'TypeScript'],
-      experience: '5 years',
-      description: 'Full-stack developer with experience in MERN stack. Passionate about software architecture and performance.',
-    },
-    {
-      id: 4,
-      name: 'Maria Garcia',
-      photo: '',
-      skills: ['Figma', 'Adobe XD', 'UI Design', 'Prototyping', 'HTML', 'CSS'],
-      experience: '3 years',
-      description: 'UI/UX Designer with experience in design systems and user research. Rich portfolio in e-commerce projects.',
-    },
-    {
-      id: 5,
-      name: 'David Chen',
-      photo: '',
-      skills: ['AWS', 'Docker', 'Kubernetes', 'Jenkins', 'Terraform'],
-      experience: '4 years',
-      description: 'DevOps engineer with experience in automation and CI/CD. AWS certified and containerization expert.',
-    },
-    {
-      id: 6,
-      name: 'Sarah Wilson',
-      photo: '',
-      skills: ['React', 'Vue.js', 'Angular', 'JavaScript', 'SASS'],
-      experience: '4 years',
-      description: 'Frontend specialist with experience in multiple frameworks. Passionate about animations and responsive design.',
-    },
-    {
-      id: 7,
-      name: 'Michael Brown',
-      photo: '',
-      skills: ['Node.js', 'Python', 'MongoDB', 'Redis', 'GraphQL'],
-      experience: '5 years',
-      description: 'Backend developer specialized in high-performance APIs and databases. Expert in optimization and scaling.',
-    }
-  ];
+  }, []);
 
   const handleJobSelect = (jobId: string) => {
     setSelectedJob(jobId);
@@ -244,28 +176,18 @@ const SelectionPage: React.FC = () => {
   };
 
   const handleSwipe = (direction: 'left' | 'right') => {
-    if (direction === 'right') {
-      const selectedJobData = jobs.find(job => job.id.toString() === selectedJob);
-      const candidate = candidates[currentCandidateIndex];
-      
-      // Get existing interview candidates
-      const existingCandidates = JSON.parse(localStorage.getItem('interviewCandidates') || '[]');
-      
-      // Add new candidate with job details
-      const newInterviewCandidate = {
-        ...candidate,
-        jobApplied: selectedJobData?.title || '',
-        company: selectedJobData?.company || '',
-      };
-      
-      // Save to localStorage
-      localStorage.setItem('interviewCandidates', JSON.stringify([...existingCandidates, newInterviewCandidate]));
-      
-      console.log('Candidate accepted and added to interviews');
-    } else {
-      console.log('Candidate rejected');
+    if (direction === 'right' && selectedJob) {
+      // Process match/like
+      console.log('Matched candidate:', candidates[currentCandidateIndex]);
     }
-    setCurrentCandidateIndex(prev => (prev + 1) % candidates.length);
+    
+    // Move to next candidate regardless of direction
+    if (currentCandidateIndex < candidates.length - 1) {
+      setCurrentCandidateIndex(currentCandidateIndex + 1);
+    } else {
+      // Reset or show end of candidates message
+      setCurrentCandidateIndex(0);
+    }
   };
 
   const handleAddJob = () => {
@@ -294,301 +216,309 @@ const SelectionPage: React.FC = () => {
     }
   };
 
+  // Render current candidate
+  const currentCandidate = candidates[currentCandidateIndex];
+  
   return (
-    <Box sx={{ display: 'flex', height: '100vh' }}>
+    <Box sx={{
+      display: 'flex',
+      width: '100%',
+      minHeight: '100%',
+      position: 'relative',
+    }}>
+      {/* Sidebar with jobs */}
       <Sidebar>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
             Available Jobs
           </Typography>
+          <List sx={{ px: 0 }}>
+            {jobs.map((job) => (
+              <StyledListItemButton
+                key={job.id}
+                selected={selectedJob === job.id}
+                onClick={() => handleJobSelect(job.id)}
+              >
+                <ListItemText 
+                  primary={job.title}
+                  secondary={`ID: ${job.id}`}
+                  primaryTypographyProps={{ fontWeight: 500 }}
+                  secondaryTypographyProps={{ fontSize: '0.8rem', opacity: 0.7 }}
+                />
+              </StyledListItemButton>
+            ))}
+          </List>
           <Button
             startIcon={<AddIcon />}
             onClick={() => setOpenJobDialog(true)}
-            variant="contained"
-            size="small"
             sx={{
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8))',
+              mt: 2,
+              width: '100%',
+              background: 'linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1))',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: 2,
+              color: '#F8FAFC',
+              textTransform: 'none',
+              py: 1,
               '&:hover': {
-                background: 'linear-gradient(135deg, rgba(139, 92, 246, 1), rgba(236, 72, 153, 1))',
+                background: 'linear-gradient(90deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2))',
               },
-              fontSize: '0.8rem',
-              py: 0.5,
-              px: 1,
             }}
           >
-            Add
+            Add New Job
           </Button>
         </Box>
-        <List sx={{ px: 0.5 }}>
-          {jobs.map((job) => (
-            <StyledListItemButton
-              key={job.id}
-              selected={selectedJob === job.id.toString()}
-              onClick={() => handleJobSelect(job.id.toString())}
+
+        <Typography variant="h6" sx={{ mb: 2, mt: 4, fontWeight: 600 }}>
+          All Candidates
+        </Typography>
+        <List sx={{ px: 0 }}>
+          {candidates.map((candidate) => (
+            <StyledListItemButton 
+              key={candidate.id}
+              onClick={() => {
+                const index = candidates.findIndex(c => c.id === candidate.id);
+                if (index !== -1) {
+                  setCurrentCandidateIndex(index);
+                }
+              }}
+              selected={currentCandidate && currentCandidate.id === candidate.id}
             >
-              <ListItemText
-                primary={job.title}
-                secondary={job.company}
-                primaryTypographyProps={{ fontWeight: 500, fontSize: '0.9rem' }}
-                secondaryTypographyProps={{ sx: { opacity: 0.7, fontSize: '0.8rem' } }}
+              <ListItemText 
+                primary={candidate.name}
+                secondary={`ID: ${candidate.id}`}
+                primaryTypographyProps={{ fontWeight: 500 }}
+                secondaryTypographyProps={{ fontSize: '0.8rem', opacity: 0.7 }}
               />
             </StyledListItemButton>
           ))}
         </List>
       </Sidebar>
 
-      <Box sx={{ 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        p: 2,
-        overflow: 'hidden',
-        position: 'relative'
+      {/* Main content */}
+      <Box sx={{
+        flexGrow: 1,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        p: 3,
       }}>
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 600, mb: 3, fontSize: '1.8rem' }}>
-          Selection
-        </Typography>
-        <Box sx={{ 
-          position: 'relative', 
-          width: '100%', 
-          maxWidth: 500, 
-          height: '70vh',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}>
-          <AnimatePresence>
-            {candidates[currentCandidateIndex] && (
-              <SwipeCard
-                key={currentCandidateIndex}
-                drag
-                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                dragElastic={0.7}
-                onDragStart={handleDragStart}
-                onDragEnd={handleDragEnd}
-                initial={{ scale: 0.95, opacity: 0 }}
-                animate={{ 
-                  scale: isDragging ? 1.05 : 1,
-                  opacity: 1,
-                  x: isDragging ? undefined : 0,
-                  rotate: isDragging ? undefined : 0,
-                }}
-                exit={{ 
-                  x: isDragging ? (dragStart.x > 0 ? 500 : -500) : 0,
-                  rotate: isDragging ? (dragStart.x > 0 ? 30 : -30) : 0,
-                  opacity: 0,
-                  transition: { duration: 0.2 }
-                }}
-              >
-                <StyledCard>
-                  {candidates[currentCandidateIndex]?.photo ? (
-                    <CardMedia
-                      component="img"
-                      height="200"
-                      image={candidates[currentCandidateIndex].photo}
-                      alt={candidates[currentCandidateIndex].name}
-                      sx={{ 
-                        objectFit: 'cover',
-                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
-                      }}
-                    />
-                  ) : (
-                    <StyledAvatar>
-                      <PersonIcon />
-                    </StyledAvatar>
-                  )}
-                  <CardContent sx={{ 
-                    flexGrow: 1, 
-                    display: 'flex', 
-                    flexDirection: 'column',
-                    gap: 1.5,
-                    p: 2.5,
-                    pb: 4
-                  }}>
-                    <Typography variant="h5" sx={{ fontWeight: 600, fontSize: '1.3rem' }}>
-                      {candidates[currentCandidateIndex]?.name}
-                    </Typography>
-                    <Typography 
-                      variant="body1" 
-                      sx={{ 
-                        opacity: 0.8,
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: 1.5,
-                        fontSize: '0.9rem'
-                      }}
-                    >
-                      {candidates[currentCandidateIndex]?.description}
-                    </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.7, fontSize: '0.85rem' }}>
-                      Experience: {candidates[currentCandidateIndex]?.experience}
-                    </Typography>
-                    <Box sx={{ 
-                      display: 'flex', 
-                      flexWrap: 'wrap', 
-                      gap: 0.8,
-                      mt: 'auto',
-                      mb: 2
-                    }}>
-                      {candidates[currentCandidateIndex]?.skills.map((skill, index) => (
-                        <SkillChip key={index} variant="body2" sx={{ fontSize: '0.8rem' }}>
-                          {skill}
-                        </SkillChip>
-                      ))}
-                    </Box>
-                  </CardContent>
-                </StyledCard>
-              </SwipeCard>
-            )}
-          </AnimatePresence>
-          {selectedJob && (
-            <Box sx={{ 
-              position: 'absolute',
-              bottom: 20,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              display: 'flex', 
-              justifyContent: 'center', 
-              gap: 3,
-              zIndex: 10,
-              background: 'rgba(0, 0, 0, 0.3)',
-              backdropFilter: 'blur(5px)',
-              borderRadius: '50px',
-              padding: '10px 20px',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)'
-            }}>
-              <ActionButton
-                onClick={() => handleSwipe('left')}
-                sx={{
-                  backgroundColor: 'rgba(239, 68, 68, 0.2)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(239, 68, 68, 0.3)',
-                  },
-                }}
-              >
-                <CloseIcon sx={{ fontSize: 32, color: '#ef4444' }} />
-              </ActionButton>
-              <ActionButton
-                onClick={() => handleSwipe('right')}
-                sx={{
-                  backgroundColor: 'rgba(34, 197, 94, 0.2)',
-                  '&:hover': {
-                    backgroundColor: 'rgba(34, 197, 94, 0.3)',
-                  },
-                }}
-              >
-                <FavoriteIcon sx={{ fontSize: 32, color: '#22c55e' }} />
-              </ActionButton>
-            </Box>
-          )}
-        </Box>
-      </Box>
-
-      <Sidebar>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600, fontSize: '1.1rem', mb: 2 }}>
-          All Candidates
-        </Typography>
-        <List sx={{ px: 0.5 }}>
-          {candidates.map((candidate) => (
-            <Paper
-              key={candidate.id}
-              elevation={0}
+        {!selectedJob ? (
+          <Typography variant="h5" sx={{ opacity: 0.6 }}>
+            Please select a job from the sidebar
+          </Typography>
+        ) : loading ? (
+          <Typography variant="h5" sx={{ opacity: 0.6 }}>
+            Loading candidates...
+          </Typography>
+        ) : !currentCandidate ? (
+          <Typography variant="h5" sx={{ opacity: 0.6 }}>
+            No candidates available
+          </Typography>
+        ) : (
+          <StyledCard>
+            <CardMedia
+              component="div"
               sx={{
-                mb: 1,
-                p: 1.2,
-                borderRadius: 2,
-                background: 'rgba(255, 255, 255, 0.03)',
-                backdropFilter: 'blur(5px)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                transition: 'all 0.2s ease-in-out',
-                '&:hover': {
-                  transform: 'translateX(5px)',
-                  background: 'rgba(255, 255, 255, 0.05)',
-                },
+                height: 240,
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1))',
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                {candidate.photo ? (
-                  <Avatar
-                    src={candidate.photo}
-                    alt={candidate.name}
-                    sx={{ width: 36, height: 36 }}
-                  />
+              <StyledAvatar>
+                <PersonIcon />
+              </StyledAvatar>
+            </CardMedia>
+            <CardContent sx={{ flexGrow: 1, p: 4 }}>
+              <Typography variant="h4" component="h2" sx={{ fontWeight: 700, mb: 1 }}>
+                {currentCandidate.name}
+              </Typography>
+              
+              <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                {currentCandidate.experience || 'No experience provided'}
+              </Typography>
+              
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                Skills
+              </Typography>
+              <Box sx={{ mb: 4 }}>
+                {currentCandidate.skills && currentCandidate.skills.length > 0 ? (
+                  currentCandidate.skills.map((skill, index) => (
+                    <SkillChip key={index} variant="body2">
+                      {skill}
+                    </SkillChip>
+                  ))
                 ) : (
-                  <Avatar sx={{ width: 36, height: 36, bgcolor: 'rgba(255, 255, 255, 0.05)' }}>
-                    <PersonIcon sx={{ fontSize: '1.2rem' }} />
-                  </Avatar>
+                  <Typography variant="body2" color="text.secondary">
+                    No skills listed
+                  </Typography>
                 )}
-                <ListItemText
-                  primary={candidate.name}
-                  secondary={candidate.skills.join(' • ')}
-                  primaryTypographyProps={{ fontWeight: 500, fontSize: '0.85rem' }}
-                  secondaryTypographyProps={{ sx: { opacity: 0.7, fontSize: '0.75rem' } }}
-                />
               </Box>
-            </Paper>
-          ))}
-        </List>
-      </Sidebar>
+              
+              <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+                About
+              </Typography>
+              <Typography variant="body1" paragraph>
+                {currentCandidate.education || 'No detailed information available.'}
+              </Typography>
+              
+              {/* Match score if available */}
+              {currentCandidate.matchScore && (
+                <Box sx={{ 
+                  mt: 3, 
+                  p: 2, 
+                  borderRadius: 2,
+                  background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2))',
+                }}>
+                  <Typography variant="h5" sx={{ fontWeight: 700, textAlign: 'center' }}>
+                    Match Score: {Math.round(currentCandidate.matchScore)}%
+                  </Typography>
+                </Box>
+              )}
+            </CardContent>
+            
+            <Box sx={{ 
+              position: 'absolute', 
+              bottom: 20, 
+              left: 0, 
+              right: 0, 
+              display: 'flex', 
+              justifyContent: 'center',
+              gap: 4
+            }}>
+              <ActionButton 
+                onClick={() => handleSwipe('left')}
+                sx={{ 
+                  background: 'rgba(255, 99, 132, 0.1)',
+                  '&:hover': { background: 'rgba(255, 99, 132, 0.2)' }
+                }}
+              >
+                <CloseIcon sx={{ fontSize: 36, color: '#FF6384' }} />
+              </ActionButton>
+              <ActionButton 
+                onClick={() => handleSwipe('right')}
+                sx={{ 
+                  background: 'rgba(75, 192, 192, 0.1)',
+                  '&:hover': { background: 'rgba(75, 192, 192, 0.2)' }
+                }}
+              >
+                <FavoriteIcon sx={{ fontSize: 36, color: '#4BC0C0' }} />
+              </ActionButton>
+            </Box>
+          </StyledCard>
+        )}
+      </Box>
 
-      <StyledDialog 
-        open={openJobDialog} 
+      {/* Add Job Dialog */}
+      <StyledDialog
+        open={openJobDialog}
         onClose={() => setOpenJobDialog(false)}
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle sx={{ fontWeight: 600, fontSize: '1.2rem' }}>Add New Job</DialogTitle>
+        <DialogTitle>
+          <Typography variant="h5" component="div" sx={{ fontWeight: 700 }}>
+            Add New Job Position
+          </Typography>
+        </DialogTitle>
         <DialogContent>
-          <TextField
-            autoFocus
-            margin="dense"
-            label="Job Title"
-            fullWidth
-            value={newJob.title}
-            onChange={(e) => setNewJob(prev => ({ ...prev, title: e.target.value }))}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="Company"
-            fullWidth
-            value={newJob.company}
-            onChange={(e) => setNewJob(prev => ({ ...prev, company: e.target.value }))}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            margin="dense"
-            label="Description"
-            fullWidth
-            multiline
-            rows={4}
-            value={newJob.description}
-            onChange={(e) => setNewJob(prev => ({ ...prev, description: e.target.value }))}
-          />
+          <Box component="form" sx={{ mt: 2 }}>
+            <TextField
+              label="Job Title"
+              fullWidth
+              margin="normal"
+              value={newJob.title}
+              onChange={(e) => setNewJob({...newJob, title: e.target.value})}
+              sx={{
+                mb: 3,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                }
+              }}
+            />
+            <TextField
+              label="Company"
+              fullWidth
+              margin="normal"
+              value={newJob.company}
+              onChange={(e) => setNewJob({...newJob, company: e.target.value})}
+              sx={{
+                mb: 3,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                }
+              }}
+            />
+            <TextField
+              label="Description"
+              fullWidth
+              multiline
+              rows={4}
+              margin="normal"
+              value={newJob.description}
+              onChange={(e) => setNewJob({...newJob, description: e.target.value})}
+              sx={{
+                mb: 3,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                }
+              }}
+            />
+            <TextField
+              label="Required Skills (comma separated)"
+              fullWidth
+              margin="normal"
+              placeholder="React, TypeScript, Node.js"
+              onChange={(e) => {
+                const skills = e.target.value.split(',').map(skill => skill.trim()).filter(Boolean);
+                setNewJob({...newJob, requiredSkills: skills});
+              }}
+              sx={{
+                mb: 3,
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                }
+              }}
+            />
+          </Box>
         </DialogContent>
-        <DialogActions sx={{ p: 2 }}>
+        <DialogActions sx={{ p: 3 }}>
           <Button 
             onClick={() => setOpenJobDialog(false)}
             sx={{ 
-              color: 'text.secondary',
-              '&:hover': {
-                background: 'rgba(255, 255, 255, 0.05)',
-              },
+              color: '#F8FAFC',
+              textTransform: 'none', 
+              mr: 2
             }}
           >
             Cancel
           </Button>
-          <Button 
-            onClick={handleAddJob} 
+          <Button
             variant="contained"
+            onClick={() => {
+              // Handle job creation
+              // For demo, just add to local state
+              const newJobWithId = { 
+                ...newJob, 
+                id: (Math.max(...jobs.map(job => parseInt(job.id))) + 1).toString(),
+                fileName: `job_description_new_${newJob.title}.docx`,
+                lastUpdated: new Date()
+              };
+              setJobs([...jobs, newJobWithId as any]);
+              setOpenJobDialog(false);
+              setNewJob({ title: '', company: '', description: '', requiredSkills: [] });
+            }}
             sx={{
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8))',
-              '&:hover': {
-                background: 'linear-gradient(135deg, rgba(139, 92, 246, 1), rgba(236, 72, 153, 1))',
-              },
+              background: 'linear-gradient(135deg, #8B5CF6, #EC4899)',
+              textTransform: 'none',
+              px: 4,
+              py: 1,
             }}
           >
-            Add
+            Add Job
           </Button>
         </DialogActions>
       </StyledDialog>
