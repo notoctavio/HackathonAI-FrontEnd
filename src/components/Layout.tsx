@@ -41,7 +41,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout, user } = useAuth();
+  const { logout, currentUser } = useAuth();
   const { unreadCount } = useNotifications();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
@@ -76,6 +76,11 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { text: 'Selection', icon: <SelectionIcon />, path: '/selection' },
     { text: 'Interviews', icon: <InterviewIcon />, path: '/interviews' }
   ];
+
+  // Add debug logging
+  useEffect(() => {
+    console.log("Layout received currentUser:", currentUser);
+  }, [currentUser]);
 
   const drawer = (
     <Box sx={{ overflow: 'auto', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -230,7 +235,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 WebkitTextFillColor: 'transparent',
               }}
             >
-              {user?.company || 'Welcome'}
+              {currentUser?.company || 'Welcome'}
             </Typography>
           </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

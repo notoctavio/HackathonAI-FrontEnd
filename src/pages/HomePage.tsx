@@ -123,6 +123,13 @@ const HomePage: React.FC = () => {
     },
   ];
 
+  const handleSignIn = () => {
+    // Force clear any existing auth data before redirecting
+    localStorage.removeItem('user');
+    console.log('Homepage: Redirecting to login page');
+    navigate('/login');
+  };
+
   return (
     <HeroSection>
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2 }}>
@@ -219,7 +226,7 @@ const HomePage: React.FC = () => {
                     <Button
                       variant="outlined"
                       size="large"
-                      onClick={() => navigate('/login')}
+                      onClick={handleSignIn}
                       sx={{
                         px: 4,
                         py: 1.5,

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, AppBar, Toolbar, Typography, Button, useTheme } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 interface LandingLayoutProps {
   children: React.ReactNode;
@@ -9,6 +10,32 @@ interface LandingLayoutProps {
 const LandingLayout: React.FC<LandingLayoutProps> = ({ children }) => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  // Clear potentially corrupt auth data when landing page loads
+  useEffect(() => {
+    // Clear any potentially corrupt localStorage data
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        if (!user || !user.token) {
+          console.log('Found invalid user data on landing page - clearing it');
+          localStorage.removeItem('user');
+        }
+      }
+    } catch (e) {
+      console.error('Error processing localStorage data - clearing it:', e);
+      localStorage.removeItem('user');
+    }
+  }, []);
+
+  const handleSignIn = () => {
+    // Force clear any existing auth data before redirecting
+    localStorage.removeItem('user');
+    console.log('Redirecting to login page');
+    navigate('/login');
+  };
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
@@ -38,7 +65,7 @@ const LandingLayout: React.FC<LandingLayoutProps> = ({ children }) => {
           </Typography>
           <Button
             color="inherit"
-            onClick={() => navigate('/login')}
+            onClick={handleSignIn}
             sx={{
               mr: 2,
               borderColor: 'rgba(255, 255, 255, 0.2)',

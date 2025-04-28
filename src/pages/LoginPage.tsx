@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -8,9 +8,10 @@ import {
   Paper,
   useTheme,
   Alert,
+  CircularProgress,
 } from '@mui/material';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const fadeIn = {
@@ -22,18 +23,63 @@ const fadeIn = {
 export default function LoginPage() {
   const theme = useTheme();
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { login, isAuthenticated } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // If user is already authenticated, redirect to dashboard
+  useEffect(() => {
+    console.log('Login page - authentication check:', isAuthenticated);
+    
+    // Clear any potentially corrupt localStorage data on login page load
+    try {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        if (!user || !user.token) {
+          console.log('Found invalid user data on login page - clearing it');
+          localStorage.removeItem('user');
+        }
+      }
+    } catch (e) {
+      console.error('Error processing localStorage data on login page - clearing it:', e);
+      localStorage.removeItem('user');
+    }
+    
+    if (isAuthenticated) {
+      const from = location.state?.from?.pathname || '/dashboard';
+      console.log('Redirecting authenticated user to:', from);
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return; // Prevent multiple submissions
+    
+    // Basic validation
+    if (!email || !password) {
+      setError('Email and password are required');
+      return;
+    }
+    
+    setError('');
+    setLoading(true);
+    
     try {
+      console.log('Attempting to login with:', email);
       await login(email, password);
-      navigate('/dashboard');
-    } catch (err) {
-      setError('Invalid email or password');
+      console.log('Login successful, redirecting to dashboard');
+      
+      // Force redirection here instead of relying solely on the useEffect
+      navigate('/dashboard', { replace: true });
+    } catch (err: any) {
+      console.error('Login error:', err);
+      setError(err.message || 'Invalid email or password');
+      setLoading(false);
     }
   };
 
@@ -93,6 +139,7 @@ export default function LoginPage() {
                 autoFocus
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
                 sx={{
                   mb: 3,
                   '& .MuiOutlinedInput-root': {
@@ -129,6 +176,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
                 sx={{
                   mb: 3,
                   '& .MuiOutlinedInput-root': {
@@ -159,6 +207,7 @@ export default function LoginPage() {
                 type="submit"
                 fullWidth
                 variant="contained"
+                disabled={loading}
                 sx={{
                   mt: 3,
                   mb: 2,
@@ -167,7 +216,7 @@ export default function LoginPage() {
                   fontSize: '1.1rem',
                 }}
               >
-                Sign In
+                {loading ? <CircularProgress size={24} color="inherit" /> : 'Sign In'}
               </Button>
 
               <Box sx={{ textAlign: 'center', mt: 2 }}>

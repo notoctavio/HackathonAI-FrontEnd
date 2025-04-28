@@ -11,6 +11,7 @@ import {
   useTheme,
 } from '@mui/material';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 const partnerCompanies = [
   'Google',
@@ -32,14 +33,17 @@ const fadeIn = {
 const RegisterPage: React.FC = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const { signup } = useAuth();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     company: '',
-    phone: '',
+    phoneNumber: '',
+    confirmPassword: '',
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -49,11 +53,33 @@ const RegisterPage: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement registration logic here
-    // Registration data will be handled by the backend
-    navigate('/dashboard');
+    setError('');
+    
+    // Validate password confirmation
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    try {
+      console.log('Submitting registration form with data:', formData);
+      await signup(
+        formData.firstName,
+        formData.lastName,
+        formData.email,
+        formData.password,
+        formData.company,
+        formData.phoneNumber,
+        formData.confirmPassword
+      );
+      console.log('Registration successful, navigating to login page');
+      navigate('/login');
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.message || 'Registration failed. Please try again.');
+    }
   };
 
   return (
@@ -226,6 +252,39 @@ const RegisterPage: React.FC = () => {
               />
               <TextField
                 fullWidth
+                label="Confirm Password"
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+                sx={{
+                  mb: 2,
+                  '& .MuiOutlinedInput-root': {
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    '& fieldset': {
+                      borderColor: 'rgba(0, 0, 0, 0.4)',
+                    },
+                    '&:hover fieldset': {
+                      borderColor: 'rgba(0, 0, 0, 0.6)',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: 'primary.main',
+                    },
+                    '& input': {
+                      color: 'rgba(0, 0, 0, 0.87)',
+                    },
+                  },
+                  '& .MuiInputLabel-root': {
+                    color: 'rgba(0, 0, 0, 0.6)',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  },
+                }}
+              />
+              <TextField
+                fullWidth
                 select
                 label="Company"
                 name="company"
@@ -272,9 +331,9 @@ const RegisterPage: React.FC = () => {
               <TextField
                 fullWidth
                 label="Phone Number"
-                name="phone"
+                name="phoneNumber"
                 type="tel"
-                value={formData.phone}
+                value={formData.phoneNumber}
                 onChange={handleChange}
                 required
                 sx={{
@@ -302,6 +361,11 @@ const RegisterPage: React.FC = () => {
                   },
                 }}
               />
+              {error && (
+                <Typography color="error" sx={{ mb: 2 }}>
+                  {error}
+                </Typography>
+              )}
               <Button
                 type="submit"
                 variant="contained"

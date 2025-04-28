@@ -1,40 +1,48 @@
 import React, { useEffect } from 'react';
-import { Box, Typography, Grid, Card, CardContent, useTheme, List, ListItem, ListItemText, ListItemAvatar, Avatar, Chip } from '@mui/material';
-import { motion } from 'framer-motion';
-import { useNotifications } from '../context/NotificationContext';
+import { 
+  Box, 
+  Typography, 
+  Grid, 
+  Paper, 
+  Card, 
+  CardContent, 
+  useTheme, 
+  List, 
+  ListItem, 
+  ListItemText, 
+  ListItemAvatar, 
+  Avatar, 
+  Chip 
+} from '@mui/material';
 import { Work, Person, School, Email } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
-
-const fadeIn = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 },
-};
+import { useNotifications } from '../context/NotificationContext';
 
 const DashboardPage: React.FC = () => {
   const theme = useTheme();
+  const { currentUser } = useAuth();
   const { addNotification } = useNotifications();
-  const { user } = useAuth();
 
+  // Add sample notifications
   useEffect(() => {
     // Add sample notifications for CV submissions
-    addNotification({
-      type: 'cv',
-      title: 'New CV Submission',
-      message: 'Maria Popescu has submitted her CV for Frontend Developer position',
-    });
+    addNotification(
+      'New CV Submission',
+      'Maria Popescu has submitted her CV for Frontend Developer position',
+      'cv'
+    );
 
-    addNotification({
-      type: 'cv',
-      title: 'CV Review Needed',
-      message: 'Ion Ionescu\'s CV requires your review for Backend Developer role',
-    });
+    addNotification(
+      'CV Review Needed',
+      'Ion Ionescu\'s CV requires your review for Backend Developer role',
+      'cv'
+    );
 
-    addNotification({
-      type: 'application',
-      title: 'New Job Application',
-      message: 'Alexandra Dumitrescu applied for Senior UX Designer position',
-    });
+    addNotification(
+      'New Job Application',
+      'Alexandra Dumitrescu applied for Senior UX Designer position',
+      'application'
+    );
   }, [addNotification]);
 
   const stats = [
@@ -93,188 +101,168 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ p: 3 }}>
-      <motion.div
-        initial="initial"
-        animate="animate"
-        variants={fadeIn}
+    <Box sx={{ p: 4 }}>
+      <Typography
+        variant="h4"
+        sx={{
+          mb: 4,
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          fontWeight: 800,
+        }}
       >
-        <Typography
-          variant="h4"
-          sx={{
-            mb: 4,
-            background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            fontWeight: 800,
-            fontSize: { xs: '2rem', md: '2.5rem' },
-          }}
-        >
-          Welcome, {user?.name || 'User'}
-        </Typography>
+        Welcome, {currentUser?.firstName || 'User'}
+      </Typography>
 
-        <Grid container spacing={3}>
-          {stats.map((stat, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-              >
-                <Card
+      {/* Statistics Cards */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        {stats.map((stat, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <Card
+              sx={{
+                height: '100%',
+                background: 'rgba(255, 255, 255, 0.05)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: 2,
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                },
+              }}
+            >
+              <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Box
+                    sx={{
+                      p: 1.5,
+                      borderRadius: '50%',
+                      background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                      mr: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '48px',
+                      height: '48px',
+                      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                    }}
+                  >
+                    {stat.icon}
+                  </Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      color: 'text.secondary',
+                      fontSize: '0.875rem',
+                    }}
+                  >
+                    {stat.title}
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="h4"
                   sx={{
-                    height: '100%',
-                    background: 'rgba(255, 255, 255, 0.05)',
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                    borderRadius: 2,
-                    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                    '&:hover': {
-                      transform: 'translateY(-5px)',
-                      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-                    },
+                    mb: 1,
+                    fontWeight: 700,
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
                   }}
                 >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                      <Box
-                        sx={{
-                          p: 1.5,
-                          borderRadius: '50%',
-                          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                          mr: 2,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          width: '48px',
-                          height: '48px',
-                          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-                        }}
-                      >
-                        {stat.icon}
-                      </Box>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          color: 'text.secondary',
-                          fontSize: '0.875rem',
-                        }}
-                      >
-                        {stat.title}
-                      </Typography>
-                    </Box>
-                    <Typography
-                      variant="h4"
-                      sx={{
-                        mb: 1,
-                        fontWeight: 700,
-                        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                      }}
-                    >
-                      {stat.value}
+                  {stat.value}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: stat.trend === 'up' ? 'success.main' : 'error.main',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5,
+                  }}
+                >
+                  {stat.change}
+                  {stat.trend === 'up' ? '↑' : '↓'}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Recent Activity */}
+      <Paper
+        sx={{
+          p: 3,
+          mb: 4,
+          background: 'rgba(255, 255, 255, 0.05)',
+          backdropFilter: 'blur(10px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          borderRadius: 2,
+        }}
+      >
+        <Typography variant="h6" sx={{ mb: 2 }}>Recent Activity</Typography>
+        <List>
+          {recentActivity.map((activity, index) => (
+            <ListItem
+              key={index}
+              sx={{
+                borderBottom: index !== recentActivity.length - 1 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+                py: 2,
+              }}
+            >
+              <ListItemAvatar>
+                <Avatar
+                  sx={{
+                    background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+                  }}
+                >
+                  {activity.name.charAt(0)}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                      {activity.name}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: stat.trend === 'up' ? 'success.main' : 'error.main',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 0.5,
-                      }}
-                    >
-                      {stat.change}
-                      {stat.trend === 'up' ? '↑' : '↓'}
+                    <Typography variant="body2" color="text.secondary">
+                      {activity.action}
                     </Typography>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </Grid>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+                      {activity.position}
+                    </Typography>
+                  </Box>
+                }
+                secondary={
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                    <Typography variant="caption" color="text.secondary">
+                      {activity.time}
+                    </Typography>
+                    <Chip
+                      label={activity.status}
+                      size="small"
+                      sx={{
+                        background: activity.status === 'completed' 
+                          ? 'rgba(76, 175, 80, 0.1)' 
+                          : activity.status === 'review'
+                          ? 'rgba(255, 152, 0, 0.1)'
+                          : 'rgba(158, 158, 158, 0.1)',
+                        color: activity.status === 'completed'
+                          ? 'success.main'
+                          : activity.status === 'review'
+                          ? 'warning.main'
+                          : 'text.secondary',
+                      }}
+                    />
+                  </Box>
+                }
+              />
+            </ListItem>
           ))}
-        </Grid>
-
-        <Box sx={{ mt: 4 }}>
-          <Typography
-            variant="h5"
-            sx={{
-              mb: 3,
-              color: 'text.primary',
-              fontWeight: 600,
-            }}
-          >
-            Recent Activity
-          </Typography>
-          <Card
-            sx={{
-              background: 'rgba(255, 255, 255, 0.05)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: 2,
-            }}
-          >
-            <List>
-              {recentActivity.map((activity, index) => (
-                <ListItem
-                  key={index}
-                  sx={{
-                    borderBottom: index !== recentActivity.length - 1 ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
-                    py: 2,
-                  }}
-                >
-                  <ListItemAvatar>
-                    <Avatar
-                      sx={{
-                        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                      }}
-                    >
-                      {activity.name.charAt(0)}
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                          {activity.name}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {activity.action}
-                        </Typography>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                          {activity.position}
-                        </Typography>
-                      </Box>
-                    }
-                    secondary={
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
-                        <Typography variant="caption" color="text.secondary">
-                          {activity.time}
-                        </Typography>
-                        <Chip
-                          label={activity.status}
-                          size="small"
-                          sx={{
-                            background: activity.status === 'completed' 
-                              ? 'rgba(76, 175, 80, 0.1)' 
-                              : activity.status === 'review'
-                              ? 'rgba(255, 152, 0, 0.1)'
-                              : 'rgba(158, 158, 158, 0.1)',
-                            color: activity.status === 'completed'
-                              ? 'success.main'
-                              : activity.status === 'review'
-                              ? 'warning.main'
-                              : 'text.secondary',
-                          }}
-                        />
-                      </Box>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Card>
-        </Box>
-      </motion.div>
+        </List>
+      </Paper>
     </Box>
   );
 };
